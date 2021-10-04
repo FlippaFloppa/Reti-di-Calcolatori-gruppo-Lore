@@ -14,7 +14,9 @@ int main(int argc, char* argv[]){
 	if(argc==2){
 
 		while(nread = read(0, &read_char, sizeof(char))) /* Fino ad EOF*/{
-			if (nread >= 0 && strrchr(argv[1],nread)!=NULL) putchar(read_char); 
+			if (nread >= 0 ) {
+				if(strrchr(argv[1],read_char)==NULL)putchar(read_char);
+			}
 			else{
 				printf("(PID %d) impossibile leggere dal file sorgente", getpid());
 				perror("Errore!");
@@ -32,7 +34,10 @@ int main(int argc, char* argv[]){
 		}
 
 		while(nread = read(fd, &read_char, sizeof(char))) /* Fino ad EOF*/{
-			if (nread >= 0 && strrchr(argv[1],nread)!=NULL) putchar(read_char);
+			if (nread >= 0 ) {
+				if(strrchr(argv[1],read_char)==NULL)putchar(read_char);
+			}
+
 			else{
 				printf("(PID %d) impossibile leggere dal file %s", getpid(), file_in);
 				perror("Errore!");

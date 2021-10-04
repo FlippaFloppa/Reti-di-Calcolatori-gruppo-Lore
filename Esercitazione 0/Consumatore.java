@@ -15,7 +15,7 @@ public class Consumatore {
 				
 				while ((x = System.in.read()) >= 0) { 
 					ch = (char) x;
-					if(!args[0].contains(ch)) System.out.print(ch);
+					if(args[0].indexOf(ch)==-1) System.out.print(ch);
 				}
 				
 			} catch(IOException ex){
@@ -40,7 +40,7 @@ public class Consumatore {
 				
 				while ((x = r.read()) >= 0) { 
 					ch = (char) x;
-					if(!args[0].contains(ch)) System.out.print(ch);
+					if(args[0].indexOf(ch)==-1) System.out.print(ch);
 				}
 				r.close();
 			} catch(IOException ex){

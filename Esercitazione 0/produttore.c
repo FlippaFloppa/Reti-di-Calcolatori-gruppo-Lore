@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
         printf("Inserisci la nuova riga\n");
 		gets (riga); 
 
-		if(!strcmp(riga,"EOF\n"))status=FALSE;
+		if(!strcmp(riga,"EOF"))status=FALSE;
 		else{
 			/* la gets legge tutta la riga, separatori inclusi, e trasforma il fine 
 			linea in fine stringa */
