@@ -1,5 +1,6 @@
-# Reti-di-Calcolatori-gruppo-Lore
+# Progetto reti di calcolatori
 
-## Progetto reti di calcolatori
+## Partecipanti
 
-`test`
+### * Lorenzo Venerandi
+### * Daniele Nano Culo
