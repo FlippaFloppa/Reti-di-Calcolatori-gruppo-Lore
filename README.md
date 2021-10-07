@@ -2,5 +2,5 @@
 
 ## Partecipanti
 
-### * Lorenzo Venerandi
-### * Daniele Nano Culo
+* Lorenzo Venerandi
+* Daniele Nano Culo
