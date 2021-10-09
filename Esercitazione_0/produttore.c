@@ -8,11 +8,13 @@
 #define TRUE 1
 #define FALSE 0
 
+#define EoF '\0'
+
 // produttore.c ORA e' un filtro
 int main(int argc, char* argv[]){
 	int fd, written;
 	char *file_out;
-	char riga[MAX_STRING_LENGTH], buf[MAX_STRING_LENGTH];
+	char riga[MAX_STRING_LENGTH];
 	
 	//controllo numero argomenti
 	if (argc != 2){ 
@@ -31,9 +33,9 @@ int main(int argc, char* argv[]){
 	
 	while(status){
         printf("Inserisci la nuova riga\n");
-		gets (riga); 
 
-		if(!strcmp(riga,"EOF"))status=FALSE;
+		//if(gets(riga)==EOF)status=FALSE;
+		if(gets(riga)==EoF)status=FALSE;
 		else{
 			/* la gets legge tutta la riga, separatori inclusi, e trasforma il fine 
 			linea in fine stringa */

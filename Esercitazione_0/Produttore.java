@@ -25,10 +25,10 @@ public class Produttore {
 
 			while (status){
 				System.out.println("Inserisci la nuova riga");
-				inputl = in.readLine()+"\n";
-				if(inputl.equals("EOF\n"))status=false;
+				inputl = in.readLine();
+				if(inputl==null)status=false;
 				else{
-					fout.write(inputl, 0, inputl.length());
+					fout.write(inputl+"\n", 0, inputl.length()+1);
 				}
 			}		
 			fout.close();

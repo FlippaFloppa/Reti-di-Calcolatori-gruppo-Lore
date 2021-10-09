@@ -3,4 +3,7 @@
 ## Partecipanti
 
 * Lorenzo Venerandi
-* Daniele Nano Culo
+* Daniele Nanni Cirulli
+* Davide di Molfetta
+* Mirko Legnini
+* Natanaele Stagni

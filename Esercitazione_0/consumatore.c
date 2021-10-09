@@ -15,7 +15,7 @@ int main(int argc, char* argv[]){
 
 		while(nread = read(0, &read_char, sizeof(char))) /* Fino ad EOF*/{
 			if (nread >= 0 ) {
-				if(strrchr(argv[1],read_char)==NULL)putchar(read_char);
+				if(strchr(argv[1],read_char)==NULL)putchar(read_char);
 			}
 			else{
 				printf("(PID %d) impossibile leggere dal file sorgente", getpid());
