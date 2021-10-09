@@ -33,10 +33,6 @@ public class Produttore {
 			}		
 			fout.close();
 		} 
-		catch (NumberFormatException nfe) { 
-			nfe.printStackTrace(); 
-			System.exit(1); // uscita con errore, intero positivo a livello di sistema Unix
-		}
 	    catch (IOException e) { 
 			e.printStackTrace();
 			System.exit(2); // uscita con errore, intero positivo a livello di sistema Unix
