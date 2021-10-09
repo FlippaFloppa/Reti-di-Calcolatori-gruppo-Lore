@@ -8,8 +8,6 @@
 #define TRUE 1
 #define FALSE 0
 
-#define EoF '\0'
-
 // produttore.c ORA e' un filtro
 int main(int argc, char* argv[]){
 	int fd, written;
@@ -35,7 +33,7 @@ int main(int argc, char* argv[]){
         printf("Inserisci la nuova riga\n");
 
 		//if(gets(riga)==EOF)status=FALSE;
-		if(gets(riga)==EoF)status=FALSE;
+		if(gets(riga)==NULL)status=FALSE;
 		else{
 			/* la gets legge tutta la riga, separatori inclusi, e trasforma il fine 
 			linea in fine stringa */
