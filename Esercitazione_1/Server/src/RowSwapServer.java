@@ -7,5 +7,9 @@ public class RowSwapServer extends Thread{
         file=nomeFile;
         this.port=port;
     }
+
+    public void run(){
+        
+    }
     
 }

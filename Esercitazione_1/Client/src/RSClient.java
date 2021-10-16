@@ -66,13 +66,13 @@ public class RSClient {
             DataInputStream diStream = new DataInputStream(biStream);
 
         
-            // Reimpostazione socket
+            // Reimpostazione packet
             if((port=diStream.readInt())<0){
                 System.out.println("File non presente");
                 System.exit(8);
             }
-            socket.disconnect();
-            socket.connect(addr, port);
+
+            packet.setPort(port);
             
             String[] strings;
             String line;
