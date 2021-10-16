@@ -33,7 +33,7 @@ public class RSClient {
 
         try{ 
 
-            buf=new byte[4];
+            buf=new byte[8];
             socket = new DatagramSocket(); 
             packet = new DatagramPacket(buf, buf.length, addr, port);
         } 
