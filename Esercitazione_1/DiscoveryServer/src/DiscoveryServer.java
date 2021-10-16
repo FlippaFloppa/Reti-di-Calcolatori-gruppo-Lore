@@ -47,9 +47,9 @@ public class DiscoveryServer {
                 tmpFile=new File(args[i]);
 
                 threadArray[i/2]=new RowSwapServer(tmpFile,tmp);
-                threadArray[i/2].start();
             }
 
+            for(RowSwapServer r:threadArray)    r.start();
 
 
             // Impostazione connessionein datagram
@@ -82,7 +82,7 @@ public class DiscoveryServer {
                 doStream=new DataOutputStream(boStream);
 
                 // Identifico il thread con il nome del file
-                while(!threadArray[i].getFileName().equals(nomeFile) && i<threadArray.length){
+                while(i<threadArray.length && !threadArray[i].getFileName().equals(nomeFile)){
                     i++;
                 }
 

@@ -45,13 +45,13 @@ public class RowSwapServer extends Thread{
                 packetPalle.setData(buffer);
                 socketPalle.receive(packetPalle);
 
-                System.out.println(getFileName());
-
+                
                 biStream=new ByteArrayInputStream(buffer);
                 diStream=new DataInputStream(biStream);
-    
+                
                 row1=diStream.readInt();
                 row2=diStream.readInt();
+                System.out.println(row1 +"\t"+row2);
                 
                 if(swap()){
                     doStream.writeInt(1);
@@ -77,7 +77,54 @@ public class RowSwapServer extends Thread{
         return this.port;
     }
 
-    private boolean swap(){
+    private boolean swap()throws FileNotFoundException, IOException{
+        
+    if(row1 == row2)
         return true;
+    //
+    BufferedReader in = null;
+    BufferedWriter out = null;
+    StringBuilder sb = new StringBuilder();
+
+        in = new BufferedReader(new FileReader(file));
+        in.mark(0);
+
+    int i = 1;
+    String l1 = null;
+    String l2 = null;
+    String l;
+        while((l = in.readLine()) != null) {
+            if(i == row1) {
+                l1 = l;
+            }else if(i == row2) {
+                l2 = l;
+            }
+            i++;
+        }
+        in.close();
+
+    if((l1 == null) || (l2 == null)) {
+        return false;
+    }else {
+            in = new BufferedReader(new FileReader(file));
+            i = 1;
+            while((l = in.readLine()) != null) {
+                if(i == row1) {
+                    sb.append(l2);
+                }else if(i == row2) {
+                    sb.append(l1);
+                }else {
+                    sb.append(l);
+                }
+                sb.append("\n");
+                i++;
+            }
+            in.close();
+            out = new BufferedWriter(new FileWriter(file));
+            out.write(sb.toString());
+            out.flush();
+            out.close();
+        return true;
+    }
     }
 }
