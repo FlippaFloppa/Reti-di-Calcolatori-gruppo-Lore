@@ -82,10 +82,12 @@ public class RSClient {
             
             while((line=stdIn.readLine())!=null){
 
-                strings=line.split("\\s*");
 
-                row1=Integer.parseInt(strings[0]);
-                row2=Integer.parseInt(strings[1]);
+                strings=line.split(" ");
+                System.out.println(strings[0]+"\n"+strings[1]);
+
+                row1=Integer.parseInt(strings[0].trim());
+                row2=Integer.parseInt(strings[1].trim());
                 
                 //Controllo righe
                 if(row1<0 || row2<0){ 
@@ -106,6 +108,9 @@ public class RSClient {
                 // Ricezione conferma dal Serever
                 packet.setData(buf);
                 socket.receive(packet);
+
+                biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
+                diStream = new DataInputStream(biStream);
 
                 if(diStream.readInt()<0){
                     System.out.println("Operazione di swap fallita!");

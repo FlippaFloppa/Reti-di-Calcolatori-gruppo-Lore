@@ -5,9 +5,9 @@ public class RowSwapServer extends Thread{
 
     private int port;
     private File file;
-    private DatagramSocket socket;
+    private DatagramSocket socketPalle;
     private byte[] buffer;
-    private DatagramPacket packet;
+    private DatagramPacket packetPalle;
     private ByteArrayInputStream biStream;
     private DataInputStream diStream ;
     private ByteArrayOutputStream boStream ;
@@ -23,11 +23,8 @@ public class RowSwapServer extends Thread{
         data= new byte[4];
 
         try{
-            packet=new DatagramPacket(buffer, buffer.length);
-            socket=new DatagramSocket(port);
-
-            biStream=new ByteArrayInputStream(buffer);
-            diStream=new DataInputStream(biStream);
+            packetPalle=new DatagramPacket(buffer, buffer.length);
+            socketPalle=new DatagramSocket(port);
 
             boStream=new ByteArrayOutputStream();
             doStream=new DataOutputStream(boStream);
@@ -44,8 +41,14 @@ public class RowSwapServer extends Thread{
 
         try{
             while(true){
-                packet.setData(buffer);
-                socket.receive(packet);
+
+                packetPalle.setData(buffer);
+                socketPalle.receive(packetPalle);
+
+                System.out.println(getFileName());
+
+                biStream=new ByteArrayInputStream(buffer);
+                diStream=new DataInputStream(biStream);
     
                 row1=diStream.readInt();
                 row2=diStream.readInt();
@@ -57,11 +60,12 @@ public class RowSwapServer extends Thread{
                 }
 
                 data=boStream.toByteArray();
-                packet.setData(data);
-                socket.send(packet);
+                packetPalle.setData(data);
+                socketPalle.send(packetPalle);
             }
         }catch(Exception e){
-            
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
