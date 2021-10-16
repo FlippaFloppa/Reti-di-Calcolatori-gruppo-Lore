@@ -96,14 +96,17 @@ public class RSClient {
                 }
                 
                 // Invio righe da swappare al DiscoveryServer
-                doStream.flush();
-                doStream.writeInt(row1);
-                doStream.writeInt(row2);
+                boStream.close();
+                doStream.close();
+                
+                boStream = new ByteArrayOutputStream(); 
+                doStream = new DataOutputStream(boStream);
+
+                doStream.writeUTF(row1+" "+row2);
                 data=boStream.toByteArray();
 
                 packet.setData(data);
                 socket.send(packet);
-
 
                 // Ricezione conferma dal Serever
                 packet.setData(buf);

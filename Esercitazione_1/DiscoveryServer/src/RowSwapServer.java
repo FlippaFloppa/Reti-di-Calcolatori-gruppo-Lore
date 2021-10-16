@@ -5,9 +5,9 @@ public class RowSwapServer extends Thread{
 
     private int port;
     private File file;
-    private DatagramSocket socketPalle;
-    private byte[] buffer;
-    private DatagramPacket packetPalle;
+    private DatagramSocket socketThread;
+    private byte[] bufferThread;
+    private DatagramPacket packetThread;
     private ByteArrayInputStream biStream;
     private DataInputStream diStream ;
     private ByteArrayOutputStream boStream ;
@@ -19,12 +19,12 @@ public class RowSwapServer extends Thread{
         this.port=port;
         this.file=file;
 
-        buffer=new byte[8];
+        bufferThread=new byte[8];
         data= new byte[4];
 
         try{
-            packetPalle=new DatagramPacket(buffer, buffer.length);
-            socketPalle=new DatagramSocket(port);
+            packetThread=new DatagramPacket(bufferThread, bufferThread.length);
+            socketThread=new DatagramSocket(port);
 
             boStream=new ByteArrayOutputStream();
             doStream=new DataOutputStream(boStream);
@@ -42,16 +42,17 @@ public class RowSwapServer extends Thread{
         try{
             while(true){
 
-                packetPalle.setData(buffer);
-                socketPalle.receive(packetPalle);
-
+                packetThread.setData(bufferThread);
+                socketThread.receive(packetThread);
                 
-                biStream=new ByteArrayInputStream(buffer);
+                biStream=new ByteArrayInputStream(packetThread.getData(),0,packetThread.getLength());
                 diStream=new DataInputStream(biStream);
                 
-                row1=diStream.readInt();
-                row2=diStream.readInt();
-                System.out.println(row1 +"\t"+row2);
+                String[] tmpThread =diStream.readUTF().trim().split(" ");
+                
+                row1=Integer.parseInt(tmpThread[0].trim());
+                row2=Integer.parseInt(tmpThread[1].trim());
+                System.out.println(row1+"\t"+row2);
                 
                 if(swap()){
                     doStream.writeInt(1);
@@ -60,8 +61,8 @@ public class RowSwapServer extends Thread{
                 }
 
                 data=boStream.toByteArray();
-                packetPalle.setData(data);
-                socketPalle.send(packetPalle);
+                packetThread.setData(data);
+                socketThread.send(packetThread);
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -124,7 +125,8 @@ public class RowSwapServer extends Thread{
             out.write(sb.toString());
             out.flush();
             out.close();
+        
+            }
         return true;
-    }
     }
 }
