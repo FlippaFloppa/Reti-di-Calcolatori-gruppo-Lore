@@ -1,13 +1,17 @@
+import java.io.*;
+import java.net.*;
+
 public class DiscoveryServer {
     public static void main(String[] args){
 
         int[] portsArray = new int[args.length/2];
         String[] filesArray = new String[args.length/2];
-        Thread[] threadArray = new Thread[args.length/2];
+        RowSwapServer[] threadArray = new RowSwapServer[args.length/2];
+        int port=-1,tmp;
 
         try{
 
-            int port=Integer.parseInt(args[0]),tmp;
+            port=Integer.parseInt(args[0]);
 
             if(args.length%2==0){
                 System.out.println("DiscoveryServer portaDiscoveryServer nomefile1 port1... \n(tutte coppie di argomenti file e porta) nomefileN portN");
@@ -29,7 +33,8 @@ public class DiscoveryServer {
                 }
             }
 
-            
+            // Creazione thread
+            File tmpFile=null;
             for(int i=1;i<args.length;i+=2){
 
                 tmp=Integer.parseInt(args[i+1]);
@@ -39,10 +44,60 @@ public class DiscoveryServer {
                     System.exit(2);
                 }
 
-                threadArray[i/2]=new RowSwapServer(args[i],tmp);
-                threadArray[i/2].start();
+                tmpFile=new File(args[i]);
 
+                threadArray[i/2]=new RowSwapServer(tmpFile,tmp);
+                threadArray[i/2].start();
             }
+
+
+
+            // Impostazione connessionein datagram
+            DatagramSocket socket = new DatagramSocket(port); 
+            byte[] buffer=new byte[256];
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            String nomeFile = null;
+            ByteArrayInputStream biStream = null;
+            DataInputStream diStream = null;
+            ByteArrayOutputStream boStream = null;
+            DataOutputStream doStream = null;
+            String linea = null;
+            byte[] data = null;
+            int i;
+            
+
+            while(true){
+                
+                packet.setData(buffer);
+                socket.receive(packet);
+                i=0;
+
+                biStream= new ByteArrayInputStream(packet.getData(),0,packet.getLength());
+                diStream= new DataInputStream(biStream);
+
+                nomeFile=diStream.readUTF();
+
+                data=new byte[4];
+                boStream=new ByteArrayOutputStream();
+                doStream=new DataOutputStream(boStream);
+
+                // Identifico il thread con il nome del file
+                while(!threadArray[i].getFileName().equals(nomeFile) && i<threadArray.length){
+                    i++;
+                }
+
+                if(i == threadArray.length){
+                    doStream.writeInt(-1);  //file non trovato
+                }
+                else{
+                    doStream.writeInt(threadArray[i].getPortNumber()); //File identificato. redirezione su Thread
+                }
+
+                data=boStream.toByteArray();
+                packet.setData(data);
+                socket.send(packet);
+            }
+
 
         }catch(Exception e){
             e.printStackTrace();

@@ -124,5 +124,8 @@ public class RSClient {
             e.printStackTrace();
             System.exit(6);
         }
+
+        socket.close();
+        System.out.println("Terminata esecuzione Client");
     }
 }

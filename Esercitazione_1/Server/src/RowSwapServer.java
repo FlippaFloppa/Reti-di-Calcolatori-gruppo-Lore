@@ -1,15 +1,24 @@
+import java.io.File;
+
 public class RowSwapServer extends Thread{
 
-    private String file;
     private int port;
+    private File file;
 
-    public RowSwapServer(String nomeFile,int port){
-        file=nomeFile;
+    public RowSwapServer(File file,int port){
         this.port=port;
+        this.file=file;
     }
 
     public void run(){
-        
+
+    }
+
+    public String getFileName(){
+        return this.file.getName();
     }
     
+    public int getPortNumber(){
+        return this.port;
+    }
 }
