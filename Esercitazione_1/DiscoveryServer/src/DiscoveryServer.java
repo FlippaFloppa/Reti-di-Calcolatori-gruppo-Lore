@@ -8,15 +8,12 @@ public class DiscoveryServer {
         int port=-1,tmp;
 
         try{
-
             if(args.length%2==0){
                 System.out.println("DiscoveryServer portaDiscoveryServer nomefile1 port1... \n(tutte coppie di argomenti file e porta) nomefileN portN");
                 System.exit(1);
             }
 
             port=Integer.parseInt(args[0]);
-
-    
             if(port<=1024 || port>=65536){
                 System.out.println("Numero di porta non valido!\nSelezionare una porta compresa fra 1025 e 65535");
                 System.exit(2);
@@ -44,12 +41,9 @@ public class DiscoveryServer {
                 }
 
                 tmpFile=new File(args[i]);
-
                 threadArray[i/2]=new RowSwapServer(tmpFile,tmp);
             }
-
             for(RowSwapServer r:threadArray)    r.start();
-
 
             // Impostazione connessionein datagram
             DatagramSocket socket = new DatagramSocket(port); 
@@ -101,7 +95,5 @@ public class DiscoveryServer {
             e.printStackTrace();
             System.exit(3);
         }
-
-
     }
 }

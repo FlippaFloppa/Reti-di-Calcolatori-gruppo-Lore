@@ -130,8 +130,6 @@ public class RowSwapServer extends Thread{
             }
             pw.println(line);
         }
-        
-        //fout.renameTo(file);
 
         pw.close();
         br.close();

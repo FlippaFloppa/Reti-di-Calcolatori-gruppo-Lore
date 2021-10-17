@@ -41,9 +41,7 @@ public class RSClient {
             System.exit(2);
         } 
 
-        
         try{
-
             //Inzio codice Datagram
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
             
@@ -65,7 +63,6 @@ public class RSClient {
             biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
             diStream = new DataInputStream(biStream);
 
-        
             // Reimpostazione packet
             if((port=diStream.readInt())<0){
                 System.out.println("File non presente");
@@ -92,7 +89,6 @@ public class RSClient {
                 packet.setData(buf);
                 socket.receive(packet);
             
-
                 biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
                 diStream = new DataInputStream(biStream);
 
