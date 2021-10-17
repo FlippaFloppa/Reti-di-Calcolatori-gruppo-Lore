@@ -4,19 +4,18 @@ import java.net.*;
 public class DiscoveryServer {
     public static void main(String[] args){
 
-        int[] portsArray = new int[args.length/2];
-        String[] filesArray = new String[args.length/2];
         RowSwapServer[] threadArray = new RowSwapServer[args.length/2];
         int port=-1,tmp;
 
         try{
 
-            port=Integer.parseInt(args[0]);
-
             if(args.length%2==0){
                 System.out.println("DiscoveryServer portaDiscoveryServer nomefile1 port1... \n(tutte coppie di argomenti file e porta) nomefileN portN");
                 System.exit(1);
             }
+
+            port=Integer.parseInt(args[0]);
+
     
             if(port<=1024 || port>=65536){
                 System.out.println("Numero di porta non valido!\nSelezionare una porta compresa fra 1025 e 65535");
@@ -61,7 +60,6 @@ public class DiscoveryServer {
             DataInputStream diStream = null;
             ByteArrayOutputStream boStream = null;
             DataOutputStream doStream = null;
-            String linea = null;
             byte[] data = null;
             int i;
             

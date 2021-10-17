@@ -33,7 +33,7 @@ public class RSClient {
 
         try{ 
 
-            buf=new byte[8];
+            buf=new byte[256];
             socket = new DatagramSocket(); 
             packet = new DatagramPacket(buf, buf.length, addr, port);
         } 
@@ -74,35 +74,15 @@ public class RSClient {
 
             packet.setPort(port);
             
-            String[] strings;
             String line;
-            int row1,row2;
-            
             System.out.println("Inserire l'indice delle righe da scambiare, separate da spazio\n^D(Unix)/^Z(Win) invio per uscire");
             
             while((line=stdIn.readLine())!=null){
 
+                boStream=new ByteArrayOutputStream();
+                doStream=new DataOutputStream(boStream);
 
-                strings=line.split(" ");
-                System.out.println(strings[0]+"\n"+strings[1]);
-
-                row1=Integer.parseInt(strings[0].trim());
-                row2=Integer.parseInt(strings[1].trim());
-                
-                //Controllo righe
-                if(row1<0 || row2<0){ 
-                    System.out.println("Impossibile swappare righe negative!");
-                    System.exit(7);
-                }
-                
-                // Invio righe da swappare al DiscoveryServer
-                boStream.close();
-                doStream.close();
-                
-                boStream = new ByteArrayOutputStream(); 
-                doStream = new DataOutputStream(boStream);
-
-                doStream.writeUTF(row1+" "+row2);
+                doStream.writeUTF(line.trim());
                 data=boStream.toByteArray();
 
                 packet.setData(data);
@@ -111,6 +91,7 @@ public class RSClient {
                 // Ricezione conferma dal Serever
                 packet.setData(buf);
                 socket.receive(packet);
+            
 
                 biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
                 diStream = new DataInputStream(biStream);

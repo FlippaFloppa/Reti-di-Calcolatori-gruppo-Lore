@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class RowSwapServer extends Thread{
 
@@ -14,12 +16,13 @@ public class RowSwapServer extends Thread{
     private DataOutputStream doStream ;
     private byte[] data ;
     private int row1,row2;
+    private long initMillis,finalMillis;
 
     public RowSwapServer(File file,int port){
         this.port=port;
         this.file=file;
 
-        bufferThread=new byte[8];
+        bufferThread=new byte[256];
         data= new byte[4];
 
         try{
@@ -44,6 +47,8 @@ public class RowSwapServer extends Thread{
 
                 packetThread.setData(bufferThread);
                 socketThread.receive(packetThread);
+
+                initMillis=System.currentTimeMillis();
                 
                 biStream=new ByteArrayInputStream(packetThread.getData(),0,packetThread.getLength());
                 diStream=new DataInputStream(biStream);
@@ -53,6 +58,9 @@ public class RowSwapServer extends Thread{
                 row1=Integer.parseInt(tmpThread[0].trim());
                 row2=Integer.parseInt(tmpThread[1].trim());
                 System.out.println(row1+"\t"+row2);
+
+                boStream=new ByteArrayOutputStream();
+                doStream=new DataOutputStream(boStream);
                 
                 if(swap()){
                     doStream.writeInt(1);
@@ -63,6 +71,10 @@ public class RowSwapServer extends Thread{
                 data=boStream.toByteArray();
                 packetThread.setData(data);
                 socketThread.send(packetThread);
+
+                finalMillis=System.currentTimeMillis();
+
+                System.out.println("Tempo impiegato: "+(finalMillis-initMillis));
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -78,55 +90,60 @@ public class RowSwapServer extends Thread{
         return this.port;
     }
 
-    private boolean swap()throws FileNotFoundException, IOException{
-        
-    if(row1 == row2)
-        return true;
-    //
-    BufferedReader in = null;
-    BufferedWriter out = null;
-    StringBuilder sb = new StringBuilder();
+    public boolean swap() throws EOFException,FileNotFoundException,IOException{
 
-        in = new BufferedReader(new FileReader(file));
-        in.mark(0);
+        if(row1==row2) return true;
 
-    int i = 1;
-    String l1 = null;
-    String l2 = null;
-    String l;
-        while((l = in.readLine()) != null) {
-            if(i == row1) {
-                l1 = l;
-            }else if(i == row2) {
-                l2 = l;
-            }
-            i++;
+        if(row1>row2){
+            int tmp2=row1;
+            row1=row2;
+            row2=tmp2;
         }
-        in.close();
 
-    if((l1 == null) || (l2 == null)) {
-        return false;
-    }else {
-            in = new BufferedReader(new FileReader(file));
-            i = 1;
-            while((l = in.readLine()) != null) {
-                if(i == row1) {
-                    sb.append(l2);
-                }else if(i == row2) {
-                    sb.append(l1);
-                }else {
-                    sb.append(l);
-                }
-                sb.append("\n");
-                i++;
-            }
-            in.close();
-            out = new BufferedWriter(new FileWriter(file));
-            out.write(sb.toString());
-            out.flush();
-            out.close();
+        File fout=new File("out");
+        BufferedReader br=new BufferedReader(new FileReader(file));
+        String line;
+        String swapLine=null;
+        int i=0;
+        PrintWriter pw=new PrintWriter(fout);
         
+        while((line=br.readLine())!=null){
+            i++;
+            if(i==row1){
+                swapLine=line;
+                BufferedReader br2 = new BufferedReader(new FileReader(file));
+                int j=0;
+                
+                while(j != row2){
+                    j++;
+                    if((line = br2.readLine())==null){
+                        br2.close();
+                        fout.delete();
+                        return false;
+                    }
+                }
+                br2.close();
+                
             }
+            else if (i==row2){
+                line=swapLine;
+            }
+            pw.println(line);
+        }
+        
+        //fout.renameTo(file);
+
+        pw.close();
+        br.close();
+
+        // Riga scelta non esistente
+        if(i<row1){
+            fout.delete();
+            return false;
+        }
+
+        Files.move(fout.toPath(),file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    
         return true;
     }
 }

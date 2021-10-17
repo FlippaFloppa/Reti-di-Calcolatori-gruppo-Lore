@@ -4,14 +4,13 @@
     // Per altre informazioni, visitare: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-
         {
             "type": "java",
             "name": "Discovery Server",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "${command:SpecifyProgramArgs}"
+            "args": "${command:SpecifyProgramArgs}",
+            "stopOnEntry": true
         }
     ]
 }
