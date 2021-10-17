@@ -10,6 +10,8 @@ public class RSClient {
         byte[] buf=null;
         InetAddress addr=null; 
         int port=-1;
+        ByteArrayInputStream biStream=null;
+        DataInputStream diStream = null;
         
         try{
             if (args.length == 3){
@@ -25,27 +27,25 @@ public class RSClient {
                 System.out.println("Utilizzo: java RSClient ipDS portDS fileName");
                 System.exit(1);
             } 
-        } 
-        catch(UnknownHostException e){
-            e.printStackTrace();
-            System.exit(3);
-        }
-
-        try{ 
 
             buf=new byte[256];
             socket = new DatagramSocket(); 
             packet = new DatagramPacket(buf, buf.length, addr, port);
         } 
+        catch(UnknownHostException e){
+            e.printStackTrace();
+            System.exit(3);
+        }
         catch (SocketException e) { 
             e.printStackTrace();
             System.exit(2);
         } 
 
-        //Inzio codice Datagram
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
         
         try{
+
+            //Inzio codice Datagram
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
             
             // Inizializzazione Stream
             ByteArrayOutputStream boStream = new ByteArrayOutputStream(); 
@@ -62,8 +62,8 @@ public class RSClient {
             System.out.println("In attesa di risposta da DiscoveryServer ...");
             socket.receive(packet);
             
-            ByteArrayInputStream biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
-            DataInputStream diStream = new DataInputStream(biStream);
+            biStream = new ByteArrayInputStream( packet.getData(),0,packet.getLength());
+            diStream = new DataInputStream(biStream);
 
         
             // Reimpostazione packet
