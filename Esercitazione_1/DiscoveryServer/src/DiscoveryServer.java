@@ -35,12 +35,15 @@ public class DiscoveryServer {
 
                 tmp=Integer.parseInt(args[i+1]);
 
-                if((tmp<=1024 || tmp>=65536)){
+                if((tmp<=1024 || tmp>=65536)){ // Controllo intervallo porte
                     System.out.println("Numero di porta non valido!\nSelezionare una porta compresa fra 1025 e 65535");
                     System.exit(2);
                 }
 
-                tmpFile=new File(args[i]);
+                if(!((tmpFile=new File(args[i])).exists())){
+                    System.out.println("Impossibile aprire il file "+args[i]);  // Controllo apertura file
+                    System.exit(4);
+                }
                 threadArray[i/2]=new RowSwapServer(tmpFile,tmp);
             }
             for(RowSwapServer r:threadArray)    r.start();

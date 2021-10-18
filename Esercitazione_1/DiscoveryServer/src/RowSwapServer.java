@@ -37,7 +37,6 @@ public class RowSwapServer extends Thread{
             e.printStackTrace();
             System.exit(666);
         }
-
     }
 
     public void run(){
@@ -48,7 +47,7 @@ public class RowSwapServer extends Thread{
                 packetThread.setData(bufferThread);
                 socketThread.receive(packetThread);
 
-                initMillis=System.currentTimeMillis();
+                //initMillis=System.currentTimeMillis();
                 
                 biStream=new ByteArrayInputStream(packetThread.getData(),0,packetThread.getLength());
                 diStream=new DataInputStream(biStream);
@@ -93,9 +92,8 @@ public class RowSwapServer extends Thread{
     public boolean swap() throws EOFException,FileNotFoundException,IOException{
 
         if(row1==row2) return true;
-
         if(row1>row2){
-            int tmp2=row1;
+            int tmp2=row1;  //swap row1 con row2
             row1=row2;
             row2=tmp2;
         }
@@ -123,20 +121,17 @@ public class RowSwapServer extends Thread{
                     }
                 }
                 br2.close();
-                
             }
             else if (i==row2){
                 line=swapLine;
             }
             pw.println(line);
         }
-
         pw.close();
         br.close();
 
-        // Riga scelta non esistente
         if(i<row1){
-            fout.delete();
+            fout.delete();        // Riga scelta non esistente
             return false;
         }
 
