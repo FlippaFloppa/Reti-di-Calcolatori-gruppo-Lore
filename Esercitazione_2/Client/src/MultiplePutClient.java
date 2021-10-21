@@ -4,27 +4,26 @@ import java.io.*;
 public class MultiplePutClient {
 
 	public static void main(String[] args) throws IOException {
-   
+
 		InetAddress addr = null;
 		int port = -1;
-		
-		try{ // Controllo argomenti
-			if(args.length == 2){
+
+		try { // Controllo argomenti
+			if (args.length == 2) {
 				addr = InetAddress.getByName(args[0]);
 				port = Integer.parseInt(args[1]);
-			} else{
+			} else {
 				System.out.println("Usage: java MultiplePutClient serverAddr serverPort");
 				System.exit(1);
 			}
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("Problemi, i seguenti: ");
 			e.printStackTrace();
 			System.out.println("Usage: java MultiplePutClient serverAddr serverPort");
 			System.exit(2);
 		}
 
-        // Inizializzazione variabili
+		// Inizializzazione variabili
 		Socket socket = null;
 		FileInputStream inFile = null;
 		DataInputStream inSock = null;
@@ -32,122 +31,122 @@ public class MultiplePutClient {
 		String nomeDir = null;
 		int minFileSize = 0;
 
-		// creazione socket
-		try{
-			socket = new Socket(addr, port);
-			System.out.println("Creata la socket: " + socket);
-			socket.setSoTimeout(5000);
-		}
-		catch(Exception e){
-			System.out.println("Problemi nella creazione della socket: ");
-			e.printStackTrace();
-		}
-
-		// creazione stream di input/output su socket
-		try{
-			inSock = new DataInputStream(socket.getInputStream());
-			outSock = new DataOutputStream(socket.getOutputStream());
-		}
-		catch(IOException e){
-			System.out.println("Problemi nella creazione degli stream su socket: ");
-			e.printStackTrace();
-		}
-
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("MultiplePutClient Started.\n\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome directory: ");
+		System.out.print(
+				"MultiplePutClient Started.\n\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome directory: ");
 
-		try{
-			while ( (nomeDir=stdIn.readLine().trim()) != null){
-				
-				if(new File(nomeDir).isDirectory()){ //Il file passato è una directory
-					
+		try {
+			while ((nomeDir = stdIn.readLine().trim()) != null) {
+
+				// creazione socket
+				try {
+					socket = new Socket(addr, port);
+					System.out.println("Creata la socket: " + socket);
+					// socket.setSoTimeout(5000);
+				} catch (Exception e) {
+					System.out.println("Problemi nella creazione della socket: ");
+					e.printStackTrace();
+				}
+
+				// creazione stream di input/output su socket
+				try {
+					inSock = new DataInputStream(socket.getInputStream());
+					outSock = new DataOutputStream(socket.getOutputStream());
+				} catch (IOException e) {
+					System.out.println("Problemi nella creazione degli stream su socket: ");
+					e.printStackTrace();
+				}
+
+				if (new File(nomeDir).isDirectory()) { // Il file passato è una directory
+
 					System.out.print("\nImmetti dimensione minima file: ");
-					try{
-						minFileSize=Integer.parseInt(stdIn.readLine().trim());
-					}
-					catch (NumberFormatException e){
+					try {
+						minFileSize = Integer.parseInt(stdIn.readLine().trim());
+					} catch (NumberFormatException e) {
 						System.out.println("Dimensione file errata!");
 						continue;
 					}
-					
-				}
-				else{
+
+				} else {
 					// Directory non trovata o file
 					System.out.println("Directory non identificata");
 					System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome file: ");
 					continue;
 				}
-				
+
 				// Inizio operazioni su files
-				try{
-					File[] filesArray=new File(nomeDir).listFiles();
-					if(filesArray==null){
+				try {
+					File[] filesArray = new File(nomeDir).listFiles();
+					if (filesArray == null) {
 						System.out.println("Nella directory non sono presenti files");
 					}
 
-					for(File f:filesArray){
-						if(f.getTotalSpace() >= minFileSize){ //Check dimensioni del file
+					outSock.writeUTF(nomeDir);
+					if (!inSock.readUTF().equals("conferma")) {
+						System.out.println("Conferma directory non ricevuta");
+						continue;
+					}
+
+					for (File f : filesArray) {
+						if (f.getTotalSpace() >= minFileSize) { // Check dimensioni del file
 
 							outSock.writeUTF(f.getName());
 							System.out.println("\n\nInviato il nome del file " + f.getName());
 
-							if(inSock.readUTF().equals("conferma")){
+							if (inSock.readUTF().equals("attiva")) {
 
 								System.out.println("Inizio la trasmissione di " + f.getName());
-								inFile=new FileInputStream(f);
+								inFile = new FileInputStream(f);
 								FileUtility.trasferisci_a_byte_file_binario(new DataInputStream(inFile), outSock);
-								inFile.close(); 			// chiusura file
+								inFile.close(); // chiusura file
 								System.out.println("Trasmissione di " + f.getName() + " terminata ");
+								outSock.close();
+								outSock=new DataOutputStream(socket.getOutputStream());
+								System.out.println(	"Esito trasmissione: " + inSock.readUTF() + "\n--------------------\n");
 
-								System.out.println("Esito trasmissione: "+inSock.readUTF()+"\n--------------------\n");
-
-							}else{
-								System.out.println( f.getName()+" non sarà inviato");
+							} else {
+								System.out.println(f.getName() + " non sarà inviato");
 							}
 
-						}else{
-							System.out.println("Il file "+f.getName()+" non raggiunge la dimensione minima selezionata");
+						} else {
+							System.out.println(
+									"Il file " + f.getName() + " non raggiunge la dimensione minima selezionata");
 						}
 					}
 
-				}
-				catch(SocketTimeoutException ste){
+				} catch (SocketTimeoutException ste) {
 					System.out.println("Timeout scattato: ");
 					ste.printStackTrace();
-					socket.close();
-					System.out
-						.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome file: ");
-					// il client continua l'esecuzione riprendendo dall'inizio del ciclo
-					continue;          
-				}
-				catch(Exception e){
-					System.out.println("Problemi nell'invio dei file in " + nomeDir + ": ");
-					e.printStackTrace();
 					socket.close();
 					System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome file: ");
 					// il client continua l'esecuzione riprendendo dall'inizio del ciclo
 					continue;
+				} catch (Exception e) {
+					System.out.println("Problemi nell'invio dei file in " + nomeDir + ": ");
+					e.printStackTrace();
+					socket.close();
+					System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome directory: ");
+					// il client continua l'esecuzione riprendendo dall'inizio del ciclo
+					continue;
 				}
-				
-				// tutto ok, pronto per nuova richiesta
+
+				inSock.close();
+				outSock.close();
+				socket.shutdownOutput();
+				socket.shutdownInput();
+				socket.close();
+
 				System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome file: ");
 			}
 
-			inSock.close();
-			outSock.close();
-
-			socket.shutdownOutput(); 
-			socket.shutdownInput();
-			socket.close();
 			System.out.println("PutFileClient: termino...");
-
 		}
 
-		catch(Exception e){
+		catch (Exception e) {
 			System.err.println("Errore irreversibile, il seguente: ");
 			e.printStackTrace();
 			System.err.println("Chiudo!");
-			System.exit(3); 
-	    }
-	} 
+			System.exit(3);
+		}
+	}
 }
