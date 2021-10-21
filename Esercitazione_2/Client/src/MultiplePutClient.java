@@ -88,7 +88,7 @@ public class MultiplePutClient {
 					}
 
 					for (File f : filesArray) {
-						if (f.getTotalSpace() >= minFileSize) { // Check dimensioni del file
+						if (f.isFile() && f.length() >= minFileSize) { // Check dimensioni del file
 
 							outSock.writeUTF(f.getName());
 							System.out.println("\n\nInviato il nome del file " + f.getName());
@@ -99,17 +99,17 @@ public class MultiplePutClient {
 								inFile = new FileInputStream(f);
 								FileUtility.trasferisci_a_byte_file_binario(new DataInputStream(inFile), outSock);
 								inFile.close(); // chiusura file
+
 								System.out.println("Trasmissione di " + f.getName() + " terminata ");
-								outSock.close();
-								outSock=new DataOutputStream(socket.getOutputStream());
-								System.out.println(	"Esito trasmissione: " + inSock.readUTF() + "\n--------------------\n");
+								System.out.println(
+										"Esito trasmissione: " + inSock.readUTF() + "\n--------------------\n");
 
 							} else {
 								System.out.println(f.getName() + " non sarà inviato");
 							}
 
 						} else {
-							System.out.println(
+							if(f.isFile())System.out.println(
 									"Il file " + f.getName() + " non raggiunge la dimensione minima selezionata");
 						}
 					}
@@ -130,8 +130,6 @@ public class MultiplePutClient {
 					continue;
 				}
 
-				inSock.close();
-				outSock.close();
 				socket.shutdownOutput();
 				socket.shutdownInput();
 				socket.close();

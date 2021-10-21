@@ -55,45 +55,50 @@ class MultiPutServerThread extends Thread {
             File directory = new File(dir);
             directory.mkdir();
 
-            while ((nomeFile = inSock.readUTF()) != null) {
 
-                curFile = new File(dir + "/"+ nomeFile);
-                System.out.println(nomeFile);
-
-                if (curFile.exists())
-                    outSock.writeUTF("salta");
-                else {
-                    curFile.createNewFile();
-                    outSock.writeUTF("attiva");
-
-                    // ciclo di ricezione dal client, salvataggio file e stamapa a video
-                    try {
-                        outFile = new FileOutputStream(curFile);
-
-                        System.out.println("Ricevo il file " + nomeFile + ": \n");
-                        FileUtility.trasferisci_a_byte_file_binario(inSock, new DataOutputStream(outFile));
-                        System.out.println("\nRicezione del file " + nomeFile + " terminata\n");
-
-                        outFile.close();
-                        outSock.writeUTF("conferma");
-                        outSock.flush();
-
-                    } catch (SocketTimeoutException ste) {
-                        System.out.println("Timeout scattato: ");
-                        ste.printStackTrace();
-                        clientSocket.close();
-                        System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, solo invio per continuare: ");
-                        return;
-                    } catch (Exception e) {
-                        System.err.println("\nProblemi durante la ricezione e scrittura del file: " + e.getMessage());
-                        e.printStackTrace();
-                        clientSocket.close();
-                        System.out.println("Terminata connessione con " + clientSocket);
-                        return;
+            try{
+                while ((nomeFile = inSock.readUTF()) != null) {
+    
+                    curFile = new File(dir + "/"+ nomeFile);
+                    System.out.println(nomeFile);
+    
+                    if (curFile.exists())
+                        outSock.writeUTF("salta");
+                    else {
+                        curFile.createNewFile();
+                        outSock.writeUTF("attiva");
+    
+                        // ciclo di ricezione dal client, salvataggio file e stamapa a video
+                        try {
+                            outFile = new FileOutputStream(curFile);
+    
+                            System.out.println("Ricevo il file " + nomeFile + ": \n");
+                            FileUtility.trasferisci_a_byte_file_binario(inSock, new DataOutputStream(outFile));
+                            System.out.println("\nRicezione del file " + nomeFile + " terminata\n");
+    
+                            outFile.close();
+                            outSock.writeUTF("conferma");
+                            outSock.flush();
+    
+                        } catch (SocketTimeoutException ste) {
+                            System.out.println("Timeout scattato: ");
+                            ste.printStackTrace();
+                            clientSocket.close();
+                            System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, solo invio per continuare: ");
+                            return;
+                        } catch (Exception e) {
+                            System.err.println("\nProblemi durante la ricezione e scrittura del file: " + e.getMessage());
+                            e.printStackTrace();
+                            clientSocket.close();
+                            System.out.println("Terminata connessione con " + clientSocket);
+                            return;
+                        }
                     }
                 }
-
+            }catch(EOFException e){
+                System.out.println("Operazione di trasferimento directory terminata!\n\n\n\n\n\n\n\n\n\n\n");
             }
+
 
             clientSocket.shutdownInput(); // chiusura socket (downstream)
             clientSocket.shutdownOutput(); // chiusura socket (dupstream)

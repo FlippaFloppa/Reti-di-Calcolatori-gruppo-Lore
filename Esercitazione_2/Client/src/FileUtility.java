@@ -17,9 +17,10 @@ public class FileUtility {
 	    try {
 	    	// esco dal ciclo all lettura di un valore negativo -> EOF
 	    	// N.B.: la funzione consuma l'EOF
-	    	while ((buffer=src.read()) >= 0) {
+	    	while ((buffer=src.read()) > 0) {
 	    		dest.write(buffer);
 	    	}
+			dest.write('\0');
 	    	dest.flush();
 	    }
 	    catch (EOFException e) {
