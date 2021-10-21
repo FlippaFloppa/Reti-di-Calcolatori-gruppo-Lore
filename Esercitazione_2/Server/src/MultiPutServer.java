@@ -52,7 +52,7 @@ public class MultiPutServer {
                 try {
                     // bloccante fino ad una pervenuta connessione
                     clientSocket = serverSocket.accept();
-                    //clientSocket.setSoTimeout(30000);
+                    // clientSocket.setSoTimeout(30000);
                     System.out.println("Server: connessione accettata: " + clientSocket);
                 } catch (Exception e) {
                     System.err.println("Server: problemi nella accettazione della connessione: " + e.getMessage());
