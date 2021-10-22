@@ -42,7 +42,6 @@ public class MultiplePutClient {
 				try {
 					socket = new Socket(addr, port);
 					System.out.println("Creata la socket: " + socket);
-					// socket.setSoTimeout(5000);
 				} catch (Exception e) {
 					System.out.println("Problemi nella creazione della socket: ");
 					e.printStackTrace();
