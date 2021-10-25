@@ -7,11 +7,6 @@ class MultiPutServerThread extends Thread {
 
     private Socket clientSocket = null;
 
-    /**
-     * Constructor
-     * 
-     * @param clientSocket
-     */
     public MultiPutServerThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
