@@ -9,8 +9,7 @@
             "name": "Server with arguments",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "${command:SpecifyProgramArgs}",
-            "stopOnEntry": true
+            "args": "${command:SpecifyProgramArgs}"
         }
     ]
 }
