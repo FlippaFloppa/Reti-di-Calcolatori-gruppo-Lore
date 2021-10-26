@@ -7,6 +7,11 @@ class MultiPutServerThread extends Thread {
 
     private Socket clientSocket = null;
 
+    /**
+     * Constructor
+     * 
+     * @param clientSocket
+     */
     public MultiPutServerThread(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
@@ -40,20 +45,16 @@ class MultiPutServerThread extends Thread {
                 return;
             }
 
-            String dir = inSock.readUTF();
-
-            outSock.writeUTF("conferma");
             String nomeFile;
             FileOutputStream outFile = null;
             File curFile = null;
-
-            File directory = new File(dir);
-            directory.mkdir();
-
+            long flength=-1;
+            long i=0;
+            int buffer;
             try {
                 while ((nomeFile = inSock.readUTF()) != null) {
 
-                    curFile = new File(dir + "/" + nomeFile);
+                    curFile = new File(nomeFile);
                     System.out.println(nomeFile);
 
                     if (curFile.exists())
@@ -64,10 +65,19 @@ class MultiPutServerThread extends Thread {
 
                         // ciclo di ricezione dal client, salvataggio file e stamapa a video
                         try {
+
+                            flength=inSock.readLong();
+                            System.out.println(flength);
+
                             outFile = new FileOutputStream(curFile);
 
                             System.out.println("Ricevo il file " + nomeFile + ": \n");
-                            FileUtility.trasferisci_a_byte_file_binario(inSock, new DataOutputStream(outFile));
+
+                            for(i=0; i<flength; i++){
+                                buffer=inSock.read();
+                                outFile.write(buffer);
+                            }
+                            
                             System.out.println("\nRicezione del file " + nomeFile + " terminata\n");
 
                             outFile.close();

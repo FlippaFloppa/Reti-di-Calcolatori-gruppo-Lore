@@ -96,6 +96,9 @@ public class MultiPutServerSeq {
         
                     File directory = new File(dir);
                     directory.mkdir();
+                    long flength=-1;
+                    long i=0;
+                    int buffer;
         
                     try {
                         while ((nomeFile = inSock.readUTF()) != null) {
@@ -114,7 +117,11 @@ public class MultiPutServerSeq {
                                     outFile = new FileOutputStream(curFile);
         
                                     System.out.println("Ricevo il file " + nomeFile + ": \n");
-                                    FileUtility.trasferisci_a_byte_file_binario(inSock, new DataOutputStream(outFile));
+                                    flength=inSock.readLong();
+                                    for(i=0; i<flength; i++){
+                                        buffer=inSock.read();
+                                        outFile.write(buffer);
+                                    }
                                     System.out.println("\nRicezione del file " + nomeFile + " terminata\n");
         
                                     outFile.close();

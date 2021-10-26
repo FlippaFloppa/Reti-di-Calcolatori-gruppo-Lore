@@ -35,17 +35,16 @@ public class MultiplePutClient {
 		System.out.print(
 				"MultiplePutClient Started.\n\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome directory: ");
 
+				// creazione socket
+			try {
+				socket = new Socket(addr, port); //Creazione thread server side
+				System.out.println("Creata la socket: " + socket);
+			} catch (Exception e) {
+				System.out.println("Problemi nella creazione della socket: ");
+				e.printStackTrace();
+				}
 		try {
 			while ((nomeDir = stdIn.readLine()) != null) {
-
-				// creazione socket
-				try {
-					socket = new Socket(addr, port);
-					System.out.println("Creata la socket: " + socket);
-				} catch (Exception e) {
-					System.out.println("Problemi nella creazione della socket: ");
-					e.printStackTrace();
-				}
 
 				// creazione stream di input/output su socket
 				try {
@@ -80,12 +79,6 @@ public class MultiplePutClient {
 						System.out.println("Nella directory non sono presenti files");
 					}
 
-					outSock.writeUTF(nomeDir);
-					if (!inSock.readUTF().equals("conferma")) {
-						System.out.println("Conferma directory non ricevuta");
-						continue;
-					}
-
 					for (File f : filesArray) {
 						if (f.isFile() && f.length() >= minFileSize) { // Check dimensioni del file
 
@@ -94,9 +87,10 @@ public class MultiplePutClient {
 
 							if (inSock.readUTF().equals("attiva")) {
 
+								outSock.writeLong(f.length());
 								System.out.println("Inizio la trasmissione di " + f.getName());
 								inFile = new FileInputStream(f);
-								FileUtility.trasferisci_a_byte_file_binario(new DataInputStream(inFile), outSock);
+								FileUtility.trasferisci_a_byte_file_binario(new DataInputStream(inFile), outSock,f.length());
 								inFile.close(); // chiusura file
 
 								System.out.println("Trasmissione di " + f.getName() + " terminata ");
@@ -130,12 +124,13 @@ public class MultiplePutClient {
 					continue;
 				}
 
-				socket.shutdownOutput();
-				socket.shutdownInput();
-				socket.close();
 
 				System.out.print("\n^D(Unix)/^Z(Win)+invio per uscire, oppure immetti nome file: ");
 			}
+
+			socket.shutdownOutput();
+			socket.shutdownInput();
+			socket.close();
 
 			System.out.println("PutFileClient: termino...");
 		}
