@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     const int on = 1;
     struct sockaddr_in cliaddr, servaddr;
     struct hostent *clienthost;
-    char req[LINE_LENGTH];
+    char req[FILENAME_MAX];
 
     /* CONTROLLO ARGOMENTI ---------------------------------- */
     if (argc != 2)
@@ -79,7 +79,6 @@ int main(int argc, char **argv)
     printf("Server: bind socket ok\n");
 
     int lenght = 0, f;
-    char tmp[LINE_LENGTH];
     char c;
 
     /* CICLO DI RICEZIONE RICHIESTE ------------------------------------------ */
@@ -89,7 +88,7 @@ int main(int argc, char **argv)
         lenght = 0;
 
         len = sizeof(struct sockaddr_in);
-        if (recvfrom(sd, req, sizeof(char) * LINE_LENGTH, 0, (struct sockaddr *)&cliaddr, &len) < 0)
+        if (recvfrom(sd, req, sizeof(char) * FILENAME_MAX, 0, (struct sockaddr *)&cliaddr, &len) < 0)
         {
             perror("recvfrom ");
             continue;

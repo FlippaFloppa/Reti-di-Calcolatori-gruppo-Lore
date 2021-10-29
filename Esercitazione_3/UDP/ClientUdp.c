@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     struct hostent *host;
     struct sockaddr_in clientaddr, servaddr;
     int port, ris, len, num1, sd;
-    char req[LINE_LENGTH];
+    char req[FILENAME_MAX];
     char c;
 
     /* CONTROLLO ARGOMENTI ---------------------------------- */
@@ -91,16 +91,11 @@ int main(int argc, char **argv)
     /* CORPO DEL CLIENT: ciclo di accettazione di richieste da utente */
     printf("Inserire nome file, ^D per terminare\n");
 
-    /* ATTENZIONE!!
-	* Cosa accade se la riga e' piu' lunga di LINE_LENGTH-1?
-	* Stesso dicasi per le altre gets...
-	* Come si potrebbe risolvere il problema?
-	*/
     while (gets(req) != NULL)
     {
         /* richiesta operazione */
         len = sizeof(servaddr);
-        if (sendto(sd, &req, sizeof(char) * LINE_LENGTH, 0, (struct sockaddr *)&servaddr, len) < 0)
+        if (sendto(sd, &req, sizeof(char) * FILENAME_MAX, 0, (struct sockaddr *)&servaddr, len) < 0)
         {
             perror("sendto");
             continue;
