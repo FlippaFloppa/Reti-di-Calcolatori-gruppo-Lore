@@ -60,26 +60,6 @@ int main(int argc, char *argv[])
         servaddr.sin_port = htons(port);
     }
 
-    /* CREAZIONE SOCKET ------------------------------------ */
-    sd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sd < 0)
-    {
-        perror("apertura socket");
-        exit(1);
-    }
-    printf("Client: creata la socket sd=%d\n", sd);
-
-    /* Operazione di BIND implicita nella connect */
-    if (connect(sd, (struct sockaddr *)&servaddr, sizeof(struct sockaddr)) < 0)
-    {
-        perror("connect");
-        exit(1);
-    }
-    printf("Client: connect ok\n");
-
-    printf("Invio numero riga");
-    write(sd, &riga, sizeof(int));
-
     /* CORPO DEL CLIENT:
 	ciclo di accettazione di richieste da utente ------- */
     printf("Nome del file sorgente: ");
@@ -110,6 +90,26 @@ int main(int argc, char *argv[])
         }
         riga = atoi(tmp);
 
+        /* CREAZIONE SOCKET ------------------------------------ */
+        sd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sd < 0)
+        {
+            perror("apertura socket");
+            exit(1);
+        }
+        printf("Client: creata la socket sd=%d\n", sd);
+
+        /* Operazione di BIND implicita nella connect */
+        if (connect(sd, (struct sockaddr *)&servaddr, sizeof(struct sockaddr)) < 0)
+        {
+            perror("connect");
+            exit(1);
+        }
+        printf("Client: connect ok\n");
+
+        printf("Invio numero riga");
+        write(sd, &riga, sizeof(int));
+
         /*INVIO File*/
         printf("Client: stampo e invio file da ordinare\n");
         while ((nread = read(fd, buff, DIM_BUFF)) > 0)
@@ -132,16 +132,15 @@ int main(int argc, char *argv[])
             write(1, buff, nread);
         }
         printf("Traspefimento terminato\n");
+        /* Chiusura socket in ricezione */
+        shutdown(sd, 0);
+        /* Chiusura file */
+
+        close(fd);
+        close(sd);
 
         printf("Nome del file da ordinare, EOF per terminare: ");
     } //while
-
-    /* Chiusura socket in ricezione */
-    shutdown(sd, 0);
-    /* Chiusura file */
-
-    close(fd);
-    close(sd);
     printf("\nClient: termino...\n");
     exit(0);
 }
