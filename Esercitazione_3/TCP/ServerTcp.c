@@ -26,9 +26,8 @@ void gestore(int signo)
 int main(int argc, char **argv)
 {
     int listen_sd, conn_sd;
-    int port, len, num, nread, riga, ir = 1, ic = 0;
+    int port, len, num, nread, riga, ir = 1;
     char c;
-    char line[MAX_LINE_SIZE];
     const int on = 1;
     struct sockaddr_in cliaddr, servaddr;
     struct hostent *host;
@@ -126,25 +125,23 @@ int main(int argc, char **argv)
             }
             else
                 printf("Server (figlio): host client e' %s \n", host->h_name);
-            
+
             printf("Ricevo riga da eliminare\n");
-            read(conn_sd,&riga,sizeof(int));
-            printf("Riga: %d\n",riga);    
-            
+            read(conn_sd, &riga, sizeof(int));
+            printf("Riga: %d\n", riga);
+
             printf("Server (figlio): eseguo la rimozione\n");
             while (read(conn_sd, &c, sizeof(char)) > 0)
             {
-                line[ic] = c;
-                ic++; // Indice carattere linea
+                if (ir != riga)
+                {
+                    write(conn_sd, c sizeof(c));
+                    write(1, c, sizeof(c));
+                }
 
                 if (c == '\n')
-                {   
-                    if (ir != riga){
-                        write(conn_sd, line, ic);
-                        write(1, line, ic);
-                    }
+                {
                     ir++; // Indice riga
-                    ic = 0;
                 }
             }
 
