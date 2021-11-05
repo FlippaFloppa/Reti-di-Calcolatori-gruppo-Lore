@@ -14,18 +14,13 @@
 #include <netdb.h>
 
 #define DIM_BUFF 100
+
+#define WORD_LENGHT 256
 #define LENGTH_FILE_NAME 20
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-typedef long fd_mask; /* un certo numero di fd_mask */
-#define NFDBITS (sizeof(fd_mask)*8) /* 8 bit in un byte */
-#define howmany(x,y)(((x)+((y)-1))/(y))
-typedef struct fd_set /* definizione della maschera */
-{fd_mask fds_bits[howmany(FD_SETSIZE,NFDBITS)];}fd_set;
-
-/*Funzione conteggio file in un direttorio*/
 /********************************************************/
-int conta_file(char *name)
+void stampa_file(char *name, int sd)
 {
 	DIR *dir;
 	struct dirent *dd;
@@ -35,13 +30,12 @@ int conta_file(char *name)
 		return -1;
 	while ((dd = readdir(dir)) != NULL)
 	{
-		printf("Trovato il file %s\n", dd->d_name);
-		count++;
+		//printf("Trovato il file %s\n", dd->d_name);
+		write(sd, dd->d_name, strlen(dd->d_name));
 	}
 	/*Conta anche direttorio stesso e padre*/
-	printf("Numero totale di file %d\n", count);
 	closedir(dir);
-	return count;
+	return;
 }
 /********************************************************/
 void gestore(int signo)
@@ -52,14 +46,22 @@ void gestore(int signo)
 }
 /********************************************************/
 
+typedef struct // Definizione pacchetto udp
+{
+	char nomeFile[FILENAME_MAX];
+	char parola[WORD_LENGHT];
+} request;
+
 int main(int argc, char **argv)
 {
-	int listenfd, connfd, udpfd, fd_file, nready, maxfdp1;
+	int listenfd, connfd, udpfd, fd_file, fd_tmp, nready, maxfdp1, lenght, lParola;
 	const int on = 1;
 	char buff[DIM_BUFF], nome_file[LENGTH_FILE_NAME], nome_dir[LENGTH_FILE_NAME];
 	fd_set rset;
 	int len, nread, nwrite, num, ris, port;
 	struct sockaddr_in cliaddr, servaddr;
+	request req;
+	char c, parola[WORD_LENGHT];
 
 	/* CONTROLLO ARGOMENTI ---------------------------------- */
 	if (argc != 2)
@@ -185,8 +187,8 @@ int main(int argc, char **argv)
 				}
 			}
 
-			if (fork() == 0)
-			{ /* processo figlio che serve la richiesta di operazione */
+			if (fork() == 0) // Richiesta TCP
+			{				 /* processo figlio che serve la richiesta di operazione */
 				close(listenfd);
 				printf("Dentro il figlio, pid=%i\n", getpid());
 				/* non c'� pi� il ciclo perch� viene creato un nuovo figlio */
@@ -238,31 +240,56 @@ int main(int argc, char **argv)
 		/* GESTIONE RICHIESTE DI CONTEGGIO ------------------------------------------ */
 		if (FD_ISSET(udpfd, &rset))
 		{
-			printf("Ricevuta richiesta di conteggio file\n");
+			printf("Ricevuta richiesta di eliminazione parola dal file\n");
 
 			len = sizeof(struct sockaddr_in);
-			if (recvfrom(udpfd, &nome_dir, sizeof(nome_dir), 0, (struct sockaddr *)&cliaddr, &len) < 0)
+			if (recvfrom(udpfd, &req, sizeof(request), 0, (struct sockaddr *)&cliaddr, &len) < 0)
 			{
 				perror("recvfrom");
 				continue;
 			}
 
-			printf("Richiesto conteggio dei file in %s\n", nome_dir);
-			num = conta_file(nome_dir);
-			printf("Risultato del conteggio: %i\n", num);
+			printf("Richiesta eliminazione parola %s dal file %s\n", req.parola, req.nomeFile);
+			num = 0;
+			lenght = 1;
 
-			/*
-			* Cosa accade se non commentiamo le righe di codice qui sotto?
-			* Cambia, dal punto di vista del tempo di attesa del client,
-			* l'ordine col quale serviamo le due possibili richieste?
-			* Cosa cambia se utilizziamo questa realizzazione, piuttosto
-			* che la prima?
-			*
-			*/
-			/*
-			printf("Inizio sleep\n");
-			sleep(30);
-			printf("Fine sleep\n");*/
+			if (fd_file = open(req.nomeFile, O_RDONLY) == NULL)
+			{
+				perror("Errore");
+				num = -1;
+			}
+
+			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC) == NULL)
+			{
+				perror("Errore file temporaneo");
+				continue;
+			}
+
+			lParola = strlen(req.parola);
+
+			while (read(fd_file, &c, sizeof(char)) > 0)
+			{
+				lenght++;
+				parola[lenght - 1] = c;
+
+				if (c == ' ' || c == '\n')
+				{
+					parola[lenght] = '\0';
+					if (lParola != strlen(parola)-1 || strncmp(parola, req.parola, lParola))
+						write(fd_tmp, parola, strlen(parola));
+					else num++;
+
+					lenght = 1;
+				}
+			}
+
+			// Rinominazione file
+			unlink(req.nomeFile);
+			link("tmp",req.nomeFile);
+			close(fd_tmp);
+			close(fd_file);
+
+			printf("Totale eliminazioni: %i\n", num);
 
 			ris = htonl(num);
 			if (sendto(udpfd, &ris, sizeof(ris), 0, (struct sockaddr *)&cliaddr, len) < 0)
@@ -270,9 +297,10 @@ int main(int argc, char **argv)
 				perror("sendto");
 				continue;
 			}
-		} /* fine gestione richieste di conteggio */
+		} /* fine gestione richieste di eliminazione */
 
 	} /* ciclo for della select */
-	/* NEVER ARRIVES HERE */
+	
+	/* NEVER GONNA GIVE YOU UP */
 	exit(0);
 }
