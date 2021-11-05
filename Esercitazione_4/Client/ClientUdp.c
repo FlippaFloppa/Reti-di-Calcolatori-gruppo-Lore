@@ -1,5 +1,5 @@
 #define h_addr h_addr_list[0]
-#define LINE_LENGTH 256
+#define WORD_LENGHT 256
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,13 +10,24 @@
 #include <netdb.h>
 #include <string.h>
 
+//-----------------------
+//----STRUCT REQUEST-----
+//-----------------------
+
+typedef struct
+{
+    char nomeFile[FILENAME_MAX];
+    char parola[WORD_LENGHT];
+} request;
+
 int main(int argc, char **argv)
 {
     struct hostent *host;
     struct sockaddr_in clientaddr, servaddr;
+
     int port, ris, len, num1, sd;
-    char req[FILENAME_MAX];
     char c;
+    request req;
 
     /* CONTROLLO ARGOMENTI ---------------------------------- */
     if (argc != 3)
@@ -91,13 +102,15 @@ int main(int argc, char **argv)
     /* CORPO DEL CLIENT: ciclo di accettazione di richieste da utente */
     printf("Inserire nome file, ^D per terminare\n");
 
-
-
-    while (gets(req) != NULL)
+    while (gets(req.nomeFile) != NULL)
     {
+
+        printf("Inserire parola da eliminare\n");
+        gets(req.parola);
+
         /* richiesta operazione */
         len = sizeof(servaddr);
-        if (sendto(sd, &req, sizeof(char) * FILENAME_MAX, 0, (struct sockaddr *)&servaddr, len) < 0)
+        if (sendto(sd, &req, sizeof(request), 0, (struct sockaddr *)&servaddr, len) < 0)
         {
             perror("sendto");
             continue;
@@ -112,9 +125,9 @@ int main(int argc, char **argv)
         }
 
         if ((int)ntohl(ris) < 0)
-            printf("Il file %s non esiste!\n\n", req);
+            printf("Il file %s non esiste!\n\n", req.nomeFile);
         else
-            printf("Esito dell'operazione: %i\n", (int)ntohl(ris));
+            printf("Numero di eliminazioni: %i\n", (int)ntohl(ris));
         printf("Inserire nome file, ^D per terminare\n");
 
     } // while gets

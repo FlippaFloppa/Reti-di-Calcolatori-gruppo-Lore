@@ -141,7 +141,6 @@ int main(int argc, char **argv)
                 {   
                     if (ir != riga){
                         write(conn_sd, line, ic);
-                        write(1, line, ic);
                     }
                     ir++; // Indice riga
                     ic = 0;
