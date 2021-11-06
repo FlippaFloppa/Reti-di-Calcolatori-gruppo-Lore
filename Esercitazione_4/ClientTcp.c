@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 
         /*RICEZIONE FILES*/
         printf("Client: ricevo e stampo file individuati della directory\n");
-        while ((nread = read(sd, buff, DIM_BUFF)) > 0)
+        while ((nread = read(sd, buff, DIM_BUFF)) > 0 && buff[nread-1]!='\0')
         {
             write(1, buff, nread);
         }

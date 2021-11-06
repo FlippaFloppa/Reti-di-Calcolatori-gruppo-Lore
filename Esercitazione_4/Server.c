@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <sys/stat.h>
 
 #define DIM_BUFF 100
 
@@ -20,6 +21,15 @@
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 /********************************************************/
+
+int isDirectory(const char *path)
+{
+	struct stat statbuf;
+	if (stat(path, &statbuf) != 0)
+		return 0;
+	return S_ISDIR(statbuf.st_mode);
+}
+
 void stampa_file(char *name, int sd)
 {
 	DIR *dir;
@@ -56,12 +66,13 @@ int main(int argc, char **argv)
 {
 	int listenfd, connfd, udpfd, fd_file, fd_tmp, nready, maxfdp1, lenght, lParola;
 	const int on = 1;
-	char buff[DIM_BUFF], nome_file[LENGTH_FILE_NAME], nome_dir[LENGTH_FILE_NAME];
+	char buff[DIM_BUFF], nome_file[WORD_LENGHT], nome_dir[WORD_LENGHT], c, parola[WORD_LENGHT];
 	fd_set rset;
 	int len, nread, nwrite, num, ris, port;
 	struct sockaddr_in cliaddr, servaddr;
 	request req;
-	char c, parola[WORD_LENGHT];
+	DIR *mainDir, *currentDir;
+	struct dirent *cur;
 
 	/* CONTROLLO ARGOMENTI ---------------------------------- */
 	if (argc != 2)
@@ -172,7 +183,7 @@ int main(int argc, char **argv)
 		}
 
 		/* GESTIONE RICHIESTE DI GET DI UN FILE ------------------------------------- */
-		if (FD_ISSET(listenfd, &rset))
+		if (FD_ISSET(listenfd, &rset)) // Richiesta TCP
 		{
 			printf("Ricevuta richiesta di get di un file\n");
 			len = sizeof(struct sockaddr_in);
@@ -187,41 +198,48 @@ int main(int argc, char **argv)
 				}
 			}
 
-			if (fork() == 0) // Richiesta TCP
-			{				 /* processo figlio che serve la richiesta di operazione */
+			if (fork() == 0)
+			{ /* processo figlio che serve la richiesta di operazione */
 				close(listenfd);
 				printf("Dentro il figlio, pid=%i\n", getpid());
 				/* non c'� pi� il ciclo perch� viene creato un nuovo figlio */
 				/* per ogni richiesta di file */
-				if (read(connfd, &nome_file, sizeof(nome_file)) <= 0)
-				{
-					perror("read");
-					break;
-				}
 
-				printf("Richiesto file %s\n", nome_file);
-				fd_file = open(nome_file, O_RDONLY);
-				if (fd_file < 0)
+				while (read(connfd, nome_dir,sizeof(nome_dir)) > 0)
 				{
-					printf("File inesistente\n");
-					write(connfd, "N", 1);
-				}
-				else
-				{
-					write(connfd, "S", 1);
-					/* lettura e invio del file (a blocchi)*/
-					printf("Leggo e invio il file richiesto\n");
-					while ((nread = read(fd_file, buff, sizeof(buff))) > 0)
+
+					printf("Richiesta directory %s\n", nome_dir);
+
+					mainDir = opendir(nome_dir);
+					if (mainDir == NULL)
 					{
-						if ((nwrite = write(connfd, buff, nread)) < 0)
-						{
-							perror("write");
-							break;
-						}
+						printf("Directory non valida\n");
+						write(connfd, "La directory è errata è ingiusta è tremendamente sbagliata\n", strlen("La directory è errata è ingiusta è tremendamente sbagliata\n"));
+						write(connfd,'\0',1);
+						continue;
 					}
-					printf("Terminato invio file\n");
-					/* non � pi� necessario inviare al client un segnale di terminazione */
-					close(fd_file);
+
+					while ((cur = readdir(mainDir)) != NULL)
+					{
+
+						if (cur->d_type == DT_DIR)
+						{
+							currentDir = opendir(cur->d_name);
+							if (currentDir == NULL)
+							{
+								printf("Directory %s non valida\n",cur->d_name);
+								continue;
+							}
+
+							while((cur=readdir(currentDir))!=NULL){
+								write(1,cur->d_name,sizeof(cur->d_name));
+								write(connfd,cur->d_name,sizeof(cur->d_name));
+							}
+						}
+
+						write(connfd,'\0',1);
+					}
+
 				}
 
 				/*la connessione assegnata al figlio viene chiusa*/
@@ -232,12 +250,9 @@ int main(int argc, char **argv)
 				exit(0);
 			} //figlio-fork
 			  /* padre chiude la socket dell'operazione */
-			  /*shutdown(connfd,0);
-			shutdown(connfd,1);
-			close(connfd);*/
-		}	  /* fine gestione richieste di file */
 
-		/* GESTIONE RICHIESTE DI CONTEGGIO ------------------------------------------ */
+		} /* fine gestione richieste di file */
+
 		if (FD_ISSET(udpfd, &rset))
 		{
 			printf("Ricevuta richiesta di eliminazione parola dal file\n");
@@ -253,13 +268,13 @@ int main(int argc, char **argv)
 			num = 0;
 			lenght = 1;
 
-			if (fd_file = open(req.nomeFile, O_RDONLY) == NULL)
+			if (fd_file = open(req.nomeFile, O_RDONLY) < 0)
 			{
 				perror("Errore");
 				num = -1;
 			}
 
-			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC) == NULL)
+			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC) < 0)
 			{
 				perror("Errore file temporaneo");
 				continue;
@@ -275,9 +290,10 @@ int main(int argc, char **argv)
 				if (c == ' ' || c == '\n')
 				{
 					parola[lenght] = '\0';
-					if (lParola != strlen(parola)-1 || strncmp(parola, req.parola, lParola))
+					if (lParola != strlen(parola) - 1 || strncmp(parola, req.parola, lParola))
 						write(fd_tmp, parola, strlen(parola));
-					else num++;
+					else
+						num++;
 
 					lenght = 1;
 				}
@@ -285,7 +301,7 @@ int main(int argc, char **argv)
 
 			// Rinominazione file
 			unlink(req.nomeFile);
-			link("tmp",req.nomeFile);
+			link("tmp", req.nomeFile);
 			close(fd_tmp);
 			close(fd_file);
 
@@ -300,7 +316,7 @@ int main(int argc, char **argv)
 		} /* fine gestione richieste di eliminazione */
 
 	} /* ciclo for della select */
-	
+
 	/* NEVER GONNA GIVE YOU UP */
 	exit(0);
 }
