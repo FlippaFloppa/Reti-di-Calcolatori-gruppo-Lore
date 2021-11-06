@@ -9,7 +9,7 @@
 #include <netdb.h>
 
 #define h_addr h_addr_list[0]
-#define DIM_BUFF 256
+#define DIM_BUFF 1
 
 int main(int argc, char *argv[])
 {
@@ -88,10 +88,12 @@ int main(int argc, char *argv[])
 
         /*RICEZIONE FILES*/
         printf("Client: ricevo e stampo file individuati della directory\n");
-        while ((nread = read(sd, buff, DIM_BUFF)) > 0 && buff[nread-1]!='\0')
+        while ((nread = read(sd, buff, DIM_BUFF)) > 0 && buff[0]!='\0')
         {
             write(1, buff, nread);
+            //printf("%s",buff);
         }
+            write(1, buff, nread);
         printf("Operazione terminata\n");
 
         printf("Nome della directory da eplorare, EOF per terminare: ");

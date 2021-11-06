@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 {
 	int listenfd, connfd, udpfd, fd_file, fd_tmp, nready, maxfdp1, lenght, lParola;
 	const int on = 1;
-	char buff[DIM_BUFF], nome_file[WORD_LENGHT], nome_dir[WORD_LENGHT], c, parola[WORD_LENGHT];
+	char buff[DIM_BUFF], nome_file[WORD_LENGHT], nome_dir[WORD_LENGHT], c, parola[WORD_LENGHT], directory[WORD_LENGHT];
 	fd_set rset;
 	int len, nread, nwrite, num, ris, port;
 	struct sockaddr_in cliaddr, servaddr;
@@ -205,9 +205,10 @@ int main(int argc, char **argv)
 				/* non c'� pi� il ciclo perch� viene creato un nuovo figlio */
 				/* per ogni richiesta di file */
 
-				while (read(connfd, nome_dir,sizeof(nome_dir)) > 0)
+				while ((num = read(connfd, nome_dir, sizeof(nome_dir))) > 0)
 				{
-
+					printf("%d\t", num);
+					nome_dir[num] = '\0';
 					printf("Richiesta directory %s\n", nome_dir);
 
 					mainDir = opendir(nome_dir);
@@ -215,31 +216,39 @@ int main(int argc, char **argv)
 					{
 						printf("Directory non valida\n");
 						write(connfd, "La directory è errata è ingiusta è tremendamente sbagliata\n", strlen("La directory è errata è ingiusta è tremendamente sbagliata\n"));
-						write(connfd,'\0',1);
+						write(connfd, '\0', 1);
 						continue;
 					}
 
 					while ((cur = readdir(mainDir)) != NULL)
 					{
 
-						if (cur->d_type == DT_DIR)
+						if (cur->d_type == DT_DIR && cur->d_name[0] != '.')
 						{
-							currentDir = opendir(cur->d_name);
+							strcpy(directory, nome_dir);
+							strcat(strcat(directory, "/"), cur->d_name);
+
+							printf("Directory:\t%s\n", directory);
+
+							currentDir = opendir(directory);
 							if (currentDir == NULL)
 							{
-								printf("Directory %s non valida\n",cur->d_name);
+								printf("Directory %s non valida\n", directory);
 								continue;
 							}
 
-							while((cur=readdir(currentDir))!=NULL){
-								write(1,cur->d_name,sizeof(cur->d_name));
-								write(connfd,cur->d_name,sizeof(cur->d_name));
+							while ((cur = readdir(currentDir)) != NULL)
+							{
+								if (cur->d_name[0] != '.')
+								{
+									printf("%s\n", cur->d_name);
+									write(connfd, strcat(cur->d_name,"\n"), strlen(cur->d_name)+sizeof(char));
+								}
 							}
 						}
 
-						write(connfd,'\0',1);
+						write(connfd, "", sizeof(""));
 					}
-
 				}
 
 				/*la connessione assegnata al figlio viene chiusa*/
