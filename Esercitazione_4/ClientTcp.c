@@ -88,12 +88,12 @@ int main(int argc, char *argv[])
 
         /*RICEZIONE FILES*/
         printf("Client: ricevo e stampo file individuati della directory\n");
-        while ((nread = read(sd, buff, DIM_BUFF)) > 0 && buff[0]!='\0')
+        while ((nread = read(sd, buff, DIM_BUFF)) > 0 && buff[0]!=(char)4 )
         {
             write(1, buff, nread);
             //printf("%s",buff);
         }
-            write(1, buff, nread);
+
         printf("Operazione terminata\n");
 
         printf("Nome della directory da eplorare, EOF per terminare: ");

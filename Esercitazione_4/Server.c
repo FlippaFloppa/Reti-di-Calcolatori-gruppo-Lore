@@ -74,6 +74,9 @@ int main(int argc, char **argv)
 	DIR *mainDir, *currentDir;
 	struct dirent *cur;
 
+	char end[2];
+	end[0] = (char)4;
+
 	/* CONTROLLO ARGOMENTI ---------------------------------- */
 	if (argc != 2)
 	{
@@ -216,39 +219,39 @@ int main(int argc, char **argv)
 					{
 						printf("Directory non valida\n");
 						write(connfd, "La directory è errata è ingiusta è tremendamente sbagliata\n", strlen("La directory è errata è ingiusta è tremendamente sbagliata\n"));
-						write(connfd, '\0', 1);
-						continue;
 					}
-
-					while ((cur = readdir(mainDir)) != NULL)
+					else
 					{
-
-						if (cur->d_type == DT_DIR && cur->d_name[0] != '.')
+						while ((cur = readdir(mainDir)) != NULL)
 						{
-							strcpy(directory, nome_dir);
-							strcat(strcat(directory, "/"), cur->d_name);
 
-							printf("Directory:\t%s\n", directory);
-
-							currentDir = opendir(directory);
-							if (currentDir == NULL)
+							if (cur->d_type == DT_DIR && cur->d_name[0] != '.')
 							{
-								printf("Directory %s non valida\n", directory);
-								continue;
-							}
+								strcpy(directory, nome_dir);
+								strcat(strcat(directory, "/"), cur->d_name);
 
-							while ((cur = readdir(currentDir)) != NULL)
-							{
-								if (cur->d_name[0] != '.')
+								printf("Directory:\t%s\n", directory);
+
+								currentDir = opendir(directory);
+								if (currentDir == NULL)
 								{
-									printf("%s\n", cur->d_name);
-									write(connfd, strcat(cur->d_name,"\n"), strlen(cur->d_name)+sizeof(char));
+									printf("Directory %s non valida\n", directory);
+									continue;
+								}
+
+								while ((cur = readdir(currentDir)) != NULL)
+								{
+									if (cur->d_name[0] != '.')
+									{
+										printf("%s\n", cur->d_name);
+										write(connfd, strcat(cur->d_name, "\n"), strlen(cur->d_name) + sizeof(char));
+									}
 								}
 							}
 						}
-
-						write(connfd, "", sizeof(""));
 					}
+
+					write(connfd, end, sizeof(end)); // Print carattere terminatore
 				}
 
 				/*la connessione assegnata al figlio viene chiusa*/
@@ -283,7 +286,7 @@ int main(int argc, char **argv)
 				num = -1;
 			}
 
-			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC) < 0)
+			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC, 0777) < 0)
 			{
 				perror("Errore file temporaneo");
 				continue;
