@@ -280,7 +280,7 @@ int main(int argc, char **argv)
 			num = 0;
 			lenght = 1;
 
-			if (fd_file = open(req.nomeFile, O_RDONLY) < 0)
+			if (fd_file = open(req.nomeFile, O_RDONLY,0777) < 0)
 			{
 				perror("Errore");
 				num = -1;
@@ -294,10 +294,13 @@ int main(int argc, char **argv)
 
 			lParola = strlen(req.parola);
 
+			printf("Inizio lettura file\n");
+
 			while (read(fd_file, &c, sizeof(char)) > 0)
 			{
 				lenght++;
 				parola[lenght - 1] = c;
+				printf("%c",c);
 
 				if (c == ' ' || c == '\n')
 				{
@@ -310,6 +313,7 @@ int main(int argc, char **argv)
 					lenght = 1;
 				}
 			}
+			printf("Fine lettura file\n");
 
 			// Rinominazione file
 			unlink(req.nomeFile);
