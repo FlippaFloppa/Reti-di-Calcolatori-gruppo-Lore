@@ -140,14 +140,10 @@ int main(int argc, char **argv)
                 }
 
                 if (c == '\n')
-<<<<<<< HEAD
                 {   
                     if (ir != riga){
                         write(conn_sd, line, ic);
                     }
-=======
-                {
->>>>>>> 96671e2d38fe6af4a63bfab22e5126f7033d15f0
                     ir++; // Indice riga
                 }
             }

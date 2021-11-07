@@ -30,23 +30,6 @@ int isDirectory(const char *path)
 	return S_ISDIR(statbuf.st_mode);
 }
 
-void stampa_file(char *name, int sd)
-{
-	DIR *dir;
-	struct dirent *dd;
-	int count = 0;
-	dir = opendir(name);
-	if (dir == NULL)
-		return -1;
-	while ((dd = readdir(dir)) != NULL)
-	{
-		//printf("Trovato il file %s\n", dd->d_name);
-		write(sd, dd->d_name, strlen(dd->d_name));
-	}
-	/*Conta anche direttorio stesso e padre*/
-	closedir(dir);
-	return;
-}
 /********************************************************/
 void gestore(int signo)
 {
@@ -73,6 +56,7 @@ int main(int argc, char **argv)
 	request req;
 	DIR *mainDir, *currentDir;
 	struct dirent *cur;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
 	char end[2];
 	end[0] = (char)4;
@@ -278,15 +262,15 @@ int main(int argc, char **argv)
 
 			printf("Richiesta eliminazione parola %s dal file %s\n", req.parola, req.nomeFile);
 			num = 0;
-			lenght = 1;
+			lenght = 0;
 
-			if (fd_file = open(req.nomeFile, O_RDONLY,0777) < 0)
+			if ((fd_file = open(req.nomeFile, O_RDONLY,mode)) < 0)
 			{
 				perror("Errore");
 				num = -1;
 			}
 
-			if (fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC, 0777) < 0)
+			if ((fd_tmp = open("tmp", O_WRONLY | O_CREAT | O_TRUNC, mode)) < 0)
 			{
 				perror("Errore file temporaneo");
 				continue;
@@ -296,28 +280,31 @@ int main(int argc, char **argv)
 
 			printf("Inizio lettura file\n");
 
-			while (read(fd_file, &c, sizeof(char)) > 0)
+			while (read(fd_file,&c, sizeof(c)) > 0)
 			{
+				parola[lenght] = c;
 				lenght++;
-				parola[lenght - 1] = c;
-				printf("%c",c);
 
 				if (c == ' ' || c == '\n')
 				{
-					parola[lenght] = '\0';
-					if (lParola != strlen(parola) - 1 || strncmp(parola, req.parola, lParola))
-						write(fd_tmp, parola, strlen(parola));
-					else
+					if (strncmp(req.parola,parola,lenght-1) != 0){
+						write(fd_tmp, parola, lenght);
+					}
+					else{
 						num++;
+					}
 
-					lenght = 1;
+
+					lenght = 0;
 				}
+
 			}
+
 			printf("Fine lettura file\n");
 
 			// Rinominazione file
-			unlink(req.nomeFile);
-			link("tmp", req.nomeFile);
+			rename ("tmp",req.nomeFile);
+			
 			close(fd_tmp);
 			close(fd_file);
 
