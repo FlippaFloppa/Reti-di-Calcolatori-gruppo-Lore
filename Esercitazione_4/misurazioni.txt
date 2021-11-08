@@ -1,0 +1,15 @@
+UDP
+dim     ms
+1 kb    3.49
+10 kb   31.09
+100 kb  102.96
+1Mb     615.93
+10Mb    6151.58
+100Mb   60086.69 
+100Mb con eliminazioni -- 119674
+
+TCP
+buffer  ms
+
+il buffer non conta un cazzo lol
+

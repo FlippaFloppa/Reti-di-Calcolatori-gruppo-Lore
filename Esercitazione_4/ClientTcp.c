@@ -9,7 +9,7 @@
 #include <netdb.h>
 
 #define h_addr h_addr_list[0]
-#define DIM_BUFF 256
+#define DIM_BUFF 1024
 
 int main(int argc, char *argv[])
 {
