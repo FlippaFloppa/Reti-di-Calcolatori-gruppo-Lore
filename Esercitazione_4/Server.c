@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #define DIM_BUFF 100
 
@@ -57,6 +58,9 @@ int main(int argc, char **argv)
 	DIR *mainDir, *currentDir;
 	struct dirent *cur;
 	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+	// Variabili per misurazioni
+	clock_t tcpStartMillis,udpStartMillis;
 
 	char end[2];
 	end[0] = (char)4;
@@ -197,6 +201,7 @@ int main(int argc, char **argv)
 					printf("%d\t", num);
 					nome_dir[num] = '\0';
 					printf("Richiesta directory %s\n", nome_dir);
+					tcpStartMillis=clock();
 
 					mainDir = opendir(nome_dir);
 					if (mainDir == NULL)
@@ -236,6 +241,7 @@ int main(int argc, char **argv)
 					}
 
 					write(connfd, end, sizeof(end)); // Print carattere terminatore
+					printf("Tempo impiegato: %f ms\n",(double)((clock()-tcpStartMillis)/CLOCKS_PER_SEC));
 				}
 
 				/*la connessione assegnata al figlio viene chiusa*/
@@ -263,6 +269,7 @@ int main(int argc, char **argv)
 			printf("Richiesta eliminazione parola %s dal file %s\n", req.parola, req.nomeFile);
 			num = 0;
 			lenght = 0;
+			udpStartMillis=clock();
 
 			if ((fd_file = open(req.nomeFile, O_RDONLY,mode)) < 0)
 			{
@@ -294,13 +301,13 @@ int main(int argc, char **argv)
 						num++;
 					}
 
-
 					lenght = 0;
 				}
 
 			}
 
 			printf("Fine lettura file\n");
+			printf("Tempo impiegato: %f ms\n",(double)((clock()-udpStartMillis)/CLOCKS_PER_SEC));
 
 			// Rinominazione file
 			rename ("tmp",req.nomeFile);
