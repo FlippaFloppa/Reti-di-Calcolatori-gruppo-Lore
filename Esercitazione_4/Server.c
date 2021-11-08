@@ -59,11 +59,10 @@ int main(int argc, char **argv)
 	struct dirent *cur;
 	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
-	// Variabili per misurazioni
-	clock_t tcpStartMillis,udpStartMillis;
-
-	char end[2];
+	char end[1];
 	end[0] = (char)4;
+
+	clock_t udpStartMillis,tcpStartMillis;
 
 	/* CONTROLLO ARGOMENTI ---------------------------------- */
 	if (argc != 2)
@@ -233,7 +232,8 @@ int main(int argc, char **argv)
 									if (cur->d_name[0] != '.')
 									{
 										printf("%s\n", cur->d_name);
-										write(connfd, strcat(cur->d_name, "\n"), strlen(cur->d_name) + sizeof(char));
+										write(connfd, cur->d_name, strlen(cur->d_name));
+										write(connfd,"\n",sizeof(char));
 									}
 								}
 							}
@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 					}
 
 					write(connfd, end, sizeof(end)); // Print carattere terminatore
-					printf("Tempo impiegato: %f ms\n",(double)((clock()-tcpStartMillis)/CLOCKS_PER_SEC));
+					printf("Tempo impiegato: %.2f ms\n",(((double)(clock()-tcpStartMillis)/CLOCKS_PER_SEC)*1000));
 				}
 
 				/*la connessione assegnata al figlio viene chiusa*/
@@ -307,7 +307,7 @@ int main(int argc, char **argv)
 			}
 
 			printf("Fine lettura file\n");
-			printf("Tempo impiegato: %f ms\n",(double)((clock()-udpStartMillis)/CLOCKS_PER_SEC));
+			printf("Tempo impiegato: %.2f ms\n",(((double)(clock()-udpStartMillis)/CLOCKS_PER_SEC)*1000));
 
 			// Rinominazione file
 			rename ("tmp",req.nomeFile);
