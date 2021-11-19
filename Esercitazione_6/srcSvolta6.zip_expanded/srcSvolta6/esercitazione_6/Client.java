@@ -1,6 +1,7 @@
 package esercitazione_6;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -49,9 +50,8 @@ public class Client {
 						System.out.println("Il numero di parole deve essere un intero");
 						continue;
 					}
-					
 					System.out.println("Righe con più di "+ max + "parole= " + serverRMI.conta_righe(fileName, max));
-				} // Count=conta linee
+				}// Count=conta linee
 
 				else if (service.equals("Cancel")) {
 					int line= 0;
@@ -76,7 +76,7 @@ public class Client {
 				else
 					System.out.println("Servizio non disponibile");
 
-				System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
+				System.out.print("Servizio (Count=conta linee, Cancel=cancella linea): ");
 			} // while (!EOF), fine richieste utente
 
 		} catch (NotBoundException nbe) {

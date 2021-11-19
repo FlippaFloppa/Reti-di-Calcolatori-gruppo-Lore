@@ -1,5 +1,6 @@
 package esercitazione_6;
 
+import java.io.FileNotFoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Optional;

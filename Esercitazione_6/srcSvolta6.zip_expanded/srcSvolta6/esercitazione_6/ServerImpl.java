@@ -1,5 +1,11 @@
 package esercitazione_6;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -12,9 +18,19 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 	}
 
 	@Override
-	public int conta_righe(String fileName, int max) throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int conta_righe(String fileName, int max) throws RemoteException{
+		try {
+		int res=0;
+		String linea;
+		File f=new File(fileName);
+		BufferedReader br=new BufferedReader(new FileReader(f));
+			while ((linea=br.readLine())!=null) {
+				if(linea.split("[ \t]+").length>max) res++;
+				}
+			return res;
+		} catch (Exception e) {
+			throw new RemoteException("Rilancio eccezione: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
