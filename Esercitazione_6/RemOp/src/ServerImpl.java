@@ -1,13 +1,12 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Optional;
 
 public class ServerImpl extends UnicastRemoteObject implements RemOp {
 
@@ -16,15 +15,17 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 	}
 
 	@Override
-	public int conta_righe(String fileName, int max) throws RemoteException{
+	public int conta_righe(String fileName, int max) throws RemoteException {
 		try {
-		int res=0;
-		String linea;
-		File f=new File(fileName);
-		BufferedReader br=new BufferedReader(new FileReader(f));
-			while ((linea=br.readLine())!=null) {
-				if(linea.split("[ \t]+").length>max) res++;
-				}
+			int res = 0;
+			String linea;
+			File f = new File(fileName);
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			while ((linea = br.readLine()) != null) {
+				if (linea.split("[ \t]+").length > max)
+					res++;
+			}
+			br.close();
 			return res;
 		} catch (Exception e) {
 			throw new RemoteException("Rilancio eccezione: " + e.getMessage(), e);
@@ -33,11 +34,27 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 
 	@Override
 	public Risposta elimina_riga(String fileName, int line) throws RemoteException {
-		// TODO Auto-generated method stub
-		return new Risposta(fileName,0);
+		try {
+			int curLine = 1;
+			String linea;
+			File f = new File(fileName), tmp = new File("temp");
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			PrintWriter pw = new PrintWriter(tmp);
+			while ((linea = br.readLine()) != null) {
+				if (curLine != line) {
+					pw.println(linea);
+				}
+				curLine++;
+			}
+			br.close();
+			pw.close();
+			Files.move(tmp.toPath(), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			return new Risposta(fileName, curLine-2);
+		} catch (Exception e) {
+			throw new RemoteException("Rilancio eccezione: " + e.getMessage(), e);
+		}
 	}
-	
-	
+
 	public static void main(String[] args) {
 		final int REGISTRYPORT = 1099;
 		String registryHost = "localhost";
