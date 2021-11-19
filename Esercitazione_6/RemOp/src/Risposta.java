@@ -1,3 +1,5 @@
+package esercitazione_6;
+
 public class Risposta {
 
 	private String nomeFile;
