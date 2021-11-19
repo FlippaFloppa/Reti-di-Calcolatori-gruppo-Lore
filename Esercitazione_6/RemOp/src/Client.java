@@ -1,5 +1,3 @@
-package esercitazione_6;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -50,15 +48,15 @@ public class Client {
 						System.out.println("Il numero di parole deve essere un intero");
 						continue;
 					}
-					System.out.println("Righe con più di "+ max + "parole= " + serverRMI.conta_righe(fileName, max));
+					System.out.println("Righe con piï¿½ di "+ max + "parole= " + serverRMI.conta_righe(fileName, max));
 				}// Count=conta linee
 
 				else if (service.equals("Cancel")) {
 					int line= 0;
-					Optional<Risposta> r;
+					Risposta r;
 					System.out.print("Nome file? ");
 					fileName=stdIn.readLine();
-					System.out.println("Numero massimo parole");
+					System.out.println("Numero linea da eliminare");
 					try{
 						line= Integer.parseInt(stdIn.readLine());
 					}
@@ -66,9 +64,9 @@ public class Client {
 						System.out.println("Il numero di parole deve essere un intero");
 						continue;
 					}
-					if (!(r=serverRMI.elimina_riga(fileName, line)).isEmpty())
-						r.get().toString();
-					else 
+					if ((r=serverRMI.elimina_riga(fileName, line)).getRighe()>=0)
+						System.out.println(r.toString());
+					else
 						System.out.println("Numero riga maggiore del massimo o file inesistente");
 
 				} //

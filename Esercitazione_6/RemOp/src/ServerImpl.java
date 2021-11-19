@@ -32,9 +32,9 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 	}
 
 	@Override
-	public Optional<Risposta> elimina_riga(String fileName, int line) throws RemoteException {
+	public Risposta elimina_riga(String fileName, int line) throws RemoteException {
 		// TODO Auto-generated method stub
-		return Optional.empty();
+		return new Risposta(fileName,0);
 	}
 	
 	
