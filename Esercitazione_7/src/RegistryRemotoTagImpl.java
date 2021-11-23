@@ -25,7 +25,6 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
             if (nome_logico_server.equals((String) table[i][0])) {
                 table[i][2]= tag;
                 risultato=true;
-                break;
             }
         return risultato;
     }
