@@ -46,6 +46,7 @@ public class Client {
 					}
 					catch(NumberFormatException e) {
 						System.out.println("Il numero di parole deve essere un intero");
+						System.out.print("Servizio (Count=conta linee, Cancel=cancella linea): ");
 						continue;
 					}
 					System.out.println("Righe con pi� di "+ min + "parole= " + serverRMI.conta_righe(fileName, min));
@@ -62,6 +63,7 @@ public class Client {
 					}
 					catch(NumberFormatException e) {
 						System.out.println("Il numero di parole deve essere un intero");
+						System.out.print("Servizio (Count=conta linee, Cancel=cancella linea): ");
 						continue;
 					}
 					if ((r=serverRMI.elimina_riga(fileName, line)).getRighe()>=0)

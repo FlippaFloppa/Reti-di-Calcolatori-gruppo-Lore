@@ -41,7 +41,7 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			PrintWriter pw = new PrintWriter(tmp);
 			while ((linea = br.readLine()) != null) {
-				if (curLine != line) {
+				if (curLine !=line) {
 					pw.println(linea);
 				}
 				curLine++;
@@ -49,6 +49,7 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 			br.close();
 			pw.close();
 			Files.move(tmp.toPath(), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			if(line>=curLine) throw new Exception("Numero linea maggiore dimensione file");
 			return new Risposta(fileName, curLine - 2);
 		} catch (Exception e) {
 			throw new RemoteException("Rilancio eccezione: " + e.getMessage(), e);
