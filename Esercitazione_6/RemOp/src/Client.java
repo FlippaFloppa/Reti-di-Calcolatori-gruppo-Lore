@@ -37,18 +37,18 @@ public class Client {
 			while ((service = stdIn.readLine()) != null) {
 
 				if (service.equals("Count")) {
-					int max = 0;
+					int min = 0;
 					System.out.print("Nome file? ");
 					fileName=stdIn.readLine();
-					System.out.println("Numero massimo parole");
+					System.out.println("Numero minimo parole");
 					try{
-						max= Integer.parseInt(stdIn.readLine());
+						min= Integer.parseInt(stdIn.readLine());
 					}
 					catch(NumberFormatException e) {
 						System.out.println("Il numero di parole deve essere un intero");
 						continue;
 					}
-					System.out.println("Righe con pi� di "+ max + "parole= " + serverRMI.conta_righe(fileName, max));
+					System.out.println("Righe con pi� di "+ min + "parole= " + serverRMI.conta_righe(fileName, min));
 				}// Count=conta linee
 
 				else if (service.equals("Cancel")) {

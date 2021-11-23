@@ -15,14 +15,14 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 	}
 
 	@Override
-	public int conta_righe(String fileName, int max) throws RemoteException {
+	public synchronized int conta_righe(String fileName, int min) throws RemoteException {
 		try {
 			int res = 0;
 			String linea;
 			File f = new File(fileName);
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			while ((linea = br.readLine()) != null) {
-				if (linea.split("[ \t]+").length > max)
+				if (linea.split("[ \t]+").length > min)
 					res++;
 			}
 			br.close();
@@ -33,7 +33,7 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 	}
 
 	@Override
-	public Risposta elimina_riga(String fileName, int line) throws RemoteException {
+	public synchronized Risposta elimina_riga(String fileName, int line) throws RemoteException {
 		try {
 			int curLine = 1;
 			String linea;
@@ -49,7 +49,7 @@ public class ServerImpl extends UnicastRemoteObject implements RemOp {
 			br.close();
 			pw.close();
 			Files.move(tmp.toPath(), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			return new Risposta(fileName, curLine-2);
+			return new Risposta(fileName, curLine - 2);
 		} catch (Exception e) {
 			throw new RemoteException("Rilancio eccezione: " + e.getMessage(), e);
 		}
