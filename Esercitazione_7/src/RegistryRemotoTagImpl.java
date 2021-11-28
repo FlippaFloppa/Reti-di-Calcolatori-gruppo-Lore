@@ -158,9 +158,10 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         // Registrazione RegistryRemoto presso rmiregistry locale
         String completeName = "//" + registryRemotoHost + ":" + registryRemotoPort + "/" + registryRemotoName;
         try {
-            RegistryRemotoImpl serverRMI = new RegistryRemotoImpl();
+            RegistryRemotoTagImpl serverRMI = new RegistryRemotoTagImpl();
             Naming.rebind(completeName, serverRMI);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
