@@ -90,11 +90,10 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
 
 		try {
 			RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming.lookup(completeRemoteRegistryName);
-			System.out.println("Ho trovato il registytdgdgs");
 			ServerCongressoImpl serverRMI = new ServerCongressoImpl();
 			registryRemoto.aggiungi(serviceName, serverRMI);
-			System.out.println("AAAAAAAAAAAAAAAAAAAaa");
-			System.out.println("DAniele culo :\t"+registryRemoto.associaTag(serviceName, "Congresso"));
+		
+			registryRemoto.associaTag(serviceName, "Congresso");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

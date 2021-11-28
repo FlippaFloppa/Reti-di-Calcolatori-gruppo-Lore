@@ -49,16 +49,16 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
             return new String[0];
         }
         for (int i = 0; i < tableSize; i++)
-            for (int j = 0; j < maxTag; j++)
-                if (((String[]) table[i][2])[j]!=null && tag.equals(((String[]) table[i][2])[j])) {
+            for (int j = 0; j < maxTag && ((String[]) table[i][2])[j]!=null; j++)
+                if ( tag.equals(((String[]) table[i][2])[j])) {
                     cont++;
                 }
         String[] risultato = new String[cont];
         // usato come indice per il riempimento
         cont = 0;
         for (int i = 0; i < tableSize; i++)
-            for (int j = 0; j < maxTag; j++)
-                if (((String[]) table[i][2])[j]!=null && tag.equals(((String[]) table[i][2])[j])) {
+            for (int j = 0; j < maxTag && ((String[]) table[i][2])[j]!=null; j++)
+                if (tag.equals(((String[]) table[i][2])[j])) {
                     risultato[cont++] = (String) table[i][0];
                 }
         return risultato;
