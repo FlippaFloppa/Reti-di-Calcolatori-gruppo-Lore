@@ -17,6 +17,8 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
             table[i][2] = null;
         }
     }
+
+    
     public boolean associaTag(String nome_logico_server, String tag){
         boolean risultato = false;
         if (nome_logico_server == null)
@@ -31,19 +33,19 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 
 
 
-    public Remote[] cercaTag(String tag){
+    public synchronized String[] cercaTag(String tag){
         int cont = 0;
         if (tag == null)
-            return new Remote[0];
+            return new String[0];
         for (int i = 0; i < tableSize; i++)
             if (tag.equals((String) table[i][2]))
                 cont++;
-        Remote[] risultato = new Remote[cont];
+        String[] risultato = new String[cont];
         // usato come indice per il riempimento
         cont = 0;
         for (int i = 0; i < tableSize; i++)
             if (tag.equals((String) table[i][2]))
-                risultato[cont++] = (Remote) table[i][1];
+                risultato[cont++] = (String) table[i][0];
         return risultato;
     }
 
