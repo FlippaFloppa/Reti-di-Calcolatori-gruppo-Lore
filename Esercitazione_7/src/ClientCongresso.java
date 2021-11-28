@@ -29,13 +29,13 @@ class ClientCongresso {
 		registryRemotoName = args[1];
 		serviceTag=args[2];
 
-		System.out.println("Invio richieste a " + registryHost + " per il servizio di tipo " + serviceTag);
+		System.out.println("Invio richieste a " + registryHost + " per il servizio di tipo " + serviceTag + "\t"+serviceTag);
 
 		// Connessione al servizio RMI remoto
 		try {
 			String completeRemoteRegistryName = "//" + registryHost + ":" + REGISTRYPORT + "/" + registryRemotoName;
 			RegistryRemotoTagClient registryRemoto = (RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
-			serviceName=registryRemoto.cercaTag(serviceName)[0];
+			serviceName=registryRemoto.cercaTag(serviceTag)[0];
 			ServerCongresso serverRMI = (ServerCongresso) registryRemoto.cerca(serviceName);
 
 

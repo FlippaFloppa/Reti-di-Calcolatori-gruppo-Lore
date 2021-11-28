@@ -94,8 +94,7 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
 			ServerCongressoImpl serverRMI = new ServerCongressoImpl();
 			registryRemoto.aggiungi(serviceName, serverRMI);
 			System.out.println("AAAAAAAAAAAAAAAAAAAaa");
-			registryRemoto.associaTag(serviceName, "congresso");
-			System.out.println("DAniele culo");
+			System.out.println("DAniele culo :\t"+registryRemoto.associaTag(serviceName, "Congresso"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

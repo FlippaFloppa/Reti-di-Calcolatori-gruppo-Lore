@@ -20,26 +20,35 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
     }
 
     public synchronized boolean associaTag(String nome_logico_server, String tag) throws RemoteException{
-        boolean risultato = false;
+
+        int j=0;
+        System.out.println(tag);
         if (nome_logico_server == null)
-            return risultato;
+            return false;
         for (int i = 0; i < tableSize; i++)
             if (nome_logico_server.equals((String) table[i][0])) {
-                ((String[]) table[i][2]) [((String[])table[i][2]).length] = tag;
-                risultato = true;
+                
+                while(j<((String[])table[i][2]).length){
+                    
+                    if(((String[]) table[i][2])[j] == null){
+                        ((String[])table[i][2])[j]=tag;
+                        return true;
+                    }
+                    j++;
+                } 
             }
-        return risultato;
+        return false;
     }
 
     public synchronized String[] cercaTag(String tag) throws RemoteException{
         int cont = 0;
-        if (tag == null)
+        if (tag == null){
             return new String[0];
+        }
         for (int i = 0; i < tableSize; i++)
             for (int j = 0; j < ((String[]) table[i][2]).length; j++)
                 if (tag.equals(((String[]) table[i][2])[j])) {
                     cont++;
-                    break;
                 }
         String[] risultato = new String[cont];
         // usato come indice per il riempimento
@@ -48,7 +57,6 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
             for (int j = 0; j < ((String[]) table[i][2]).length; j++)
                 if (tag.equals(((String[]) table[i][2])[j])) {
                     risultato[cont++] = (String) table[i][0];
-                    break;
                 }
         return risultato;
     }
