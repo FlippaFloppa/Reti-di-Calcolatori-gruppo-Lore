@@ -1,12 +1,12 @@
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public class RegistryRemotoTagImpl extends UnicastRemoteObject implements RegistryRemotoTagServer {
     final int tableSize = 100;
-    // Tabella: la prima colonna contiene i nomi, la seconda i riferimenti remoti, la terza i tag
+    // Tabella: la prima colonna contiene i nomi, la seconda i riferimenti remoti,
+    // la terza i tag
     Object[][] table = new Object[tableSize][3];
 
     // Costruttore
@@ -19,35 +19,37 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         }
     }
 
-    
-    public boolean associaTag(String nome_logico_server, String tag){
+    public boolean associaTag(String nome_logico_server, String tag) {
         boolean risultato = false;
         if (nome_logico_server == null)
             return risultato;
         for (int i = 0; i < tableSize; i++)
             if (nome_logico_server.equals((String) table[i][0])) {
-                table[i][2]= tag;
-                risultato=true;
+                ((String[]) table[i][2]) [((String[])table[i][2]).length] = tag;
+                risultato = true;
             }
         return risultato;
     }
 
-
-
-    public synchronized String[] cercaTag(String tag){
+    public synchronized String[] cercaTag(String tag) {
         int cont = 0;
         if (tag == null)
             return new String[0];
         for (int i = 0; i < tableSize; i++)
-            if (tag.equals((String) table[i][2]))
-                cont++;
+            for (int j = 0; j < ((String[]) table[i][2]).length; j++)
+                if (tag.equals(((String[]) table[i][2])[j])) {
+                    cont++;
+                    break;
+                }
         String[] risultato = new String[cont];
         // usato come indice per il riempimento
         cont = 0;
         for (int i = 0; i < tableSize; i++)
-            if (tag.equals((String) table[i][2]))
-            //if(Arrays.binarySearch(table[i][2], tag)!=-1)
-                risultato[cont++] = (String) table[i][0];
+            for (int j = 0; j < ((String[]) table[i][2]).length; j++)
+                if (tag.equals(((String[]) table[i][2])[j])) {
+                    risultato[cont++] = (String) table[i][0];
+                    break;
+                }
         return risultato;
     }
 
