@@ -1,11 +1,12 @@
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Arrays;
 import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public class RegistryRemotoTagImpl extends UnicastRemoteObject implements RegistryRemotoTagServer {
     final int tableSize = 100;
-    // Tabella: la prima colonna contiene i nomi, la seconda i riferimenti remoti
+    // Tabella: la prima colonna contiene i nomi, la seconda i riferimenti remoti, la terza i tag
     Object[][] table = new Object[tableSize][3];
 
     // Costruttore
@@ -14,7 +15,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         for (int i = 0; i < tableSize; i++) {
             table[i][0] = null;
             table[i][1] = null;
-            table[i][2] = null;
+            table[i][2] = new String[10];
         }
     }
 
@@ -45,6 +46,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         cont = 0;
         for (int i = 0; i < tableSize; i++)
             if (tag.equals((String) table[i][2]))
+            //if(Arrays.binarySearch(table[i][2], tag)!=-1)
                 risultato[cont++] = (String) table[i][0];
         return risultato;
     }
