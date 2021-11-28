@@ -85,12 +85,19 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
 		// Registrazione servizio presso RegistryRemoto
 		String completeRemoteRegistryName = "//" + registryRemotoHost +
 				":" + registryRemotoPort + "/" + registryRemotoName;
+
+		System.out.println("Sto per registrarmi");
+
 		try {
 			RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming.lookup(completeRemoteRegistryName);
+			System.out.println("Ho trovato il registytdgdgs");
 			ServerCongressoImpl serverRMI = new ServerCongressoImpl();
 			registryRemoto.aggiungi(serviceName, serverRMI);
+			System.out.println("AAAAAAAAAAAAAAAAAAAaa");
 			registryRemoto.associaTag(serviceName, "congresso");
+			System.out.println("DAniele culo");
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         }
     }
 
-    public synchronized boolean associaTag(String nome_logico_server, String tag) {
+    public synchronized boolean associaTag(String nome_logico_server, String tag) throws RemoteException{
         boolean risultato = false;
         if (nome_logico_server == null)
             return risultato;
@@ -31,7 +31,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         return risultato;
     }
 
-    public synchronized String[] cercaTag(String tag) {
+    public synchronized String[] cercaTag(String tag) throws RemoteException{
         int cont = 0;
         if (tag == null)
             return new String[0];
