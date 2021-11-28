@@ -19,7 +19,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         }
     }
 
-    public boolean associaTag(String nome_logico_server, String tag) {
+    public synchronized boolean associaTag(String nome_logico_server, String tag) {
         boolean risultato = false;
         if (nome_logico_server == null)
             return risultato;
