@@ -3,8 +3,11 @@ import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+
+
 public class RegistryRemotoTagImpl extends UnicastRemoteObject implements RegistryRemotoTagServer {
     final int tableSize = 100;
+    final int maxTag = 10;
     // Tabella: la prima colonna contiene i nomi, la seconda i riferimenti remoti,
     // la terza i tag
     Object[][] table = new Object[tableSize][3];
@@ -15,7 +18,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         for (int i = 0; i < tableSize; i++) {
             table[i][0] = null;
             table[i][1] = null;
-            table[i][2] = new String[10];
+            table[i][2] = new String[maxTag];
         }
     }
 
@@ -28,7 +31,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
         for (int i = 0; i < tableSize; i++)
             if (nome_logico_server.equals((String) table[i][0])) {
                 
-                while(j<((String[])table[i][2]).length){
+                while(j<(maxTag)){
                     
                     if(((String[]) table[i][2])[j] == null){
                         ((String[])table[i][2])[j]=tag;
@@ -46,16 +49,16 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
             return new String[0];
         }
         for (int i = 0; i < tableSize; i++)
-            for (int j = 0; j < ((String[]) table[i][2]).length; j++)
-                if (tag.equals(((String[]) table[i][2])[j])) {
+            for (int j = 0; j < maxTag; j++)
+                if (((String[]) table[i][2])[j]!=null && tag.equals(((String[]) table[i][2])[j])) {
                     cont++;
                 }
         String[] risultato = new String[cont];
         // usato come indice per il riempimento
         cont = 0;
         for (int i = 0; i < tableSize; i++)
-            for (int j = 0; j < ((String[]) table[i][2]).length; j++)
-                if (tag.equals(((String[]) table[i][2])[j])) {
+            for (int j = 0; j < maxTag; j++)
+                if (((String[]) table[i][2])[j]!=null && tag.equals(((String[]) table[i][2])[j])) {
                     risultato[cont++] = (String) table[i][0];
                 }
         return risultato;
