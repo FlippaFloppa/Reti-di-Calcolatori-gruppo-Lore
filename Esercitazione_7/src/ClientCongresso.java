@@ -15,10 +15,12 @@ class ClientCongresso {
 		final int REGISTRYPORT = 1099;
 		String registryHost = null; // host remoto con registry
 		String registryRemotoName = "";
-		String serviceName=null;
-		String serviceTag=null;
+		String[] serviceList = null;
+		int serviceNum;
+		String serviceTag = null;
 		String service;
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+		ServerCongresso serverRMI = null;
 
 		// Controllo dei parametri della riga di comando
 		if (args.length != 3) {
@@ -27,17 +29,32 @@ class ClientCongresso {
 		}
 		registryHost = args[0];
 		registryRemotoName = args[1];
-		serviceTag=args[2];
+		serviceTag = args[2];
 
-		System.out.println("Invio richieste a " + registryHost + " per il servizio di tipo " + serviceTag + "\t"+serviceTag);
+		System.out.println(
+				"Invio richieste a " + registryHost + " per il servizio di tipo " + serviceTag + "\t" + serviceTag);
 
 		// Connessione al servizio RMI remoto
 		try {
 			String completeRemoteRegistryName = "//" + registryHost + ":" + REGISTRYPORT + "/" + registryRemotoName;
 			RegistryRemotoTagClient registryRemoto = (RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
-			serviceName=registryRemoto.cercaTag(serviceTag)[0];
-			ServerCongresso serverRMI = (ServerCongresso) registryRemoto.cerca(serviceName);
+			serviceList = registryRemoto.cercaTag(serviceTag);
 
+			// Scelta ServiceTag
+			do {
+				System.out.println("Seleziona il numero del servitore:");
+				for (int i = 1; i <= serviceList.length; i++) {
+					System.out.println(i + ")\t" + serviceList[i - 1]);
+				}
+
+				serviceNum = Integer.parseInt(stdIn.readLine());
+				// Controllo servitore
+				if (serviceNum > 0 && serviceNum <= serviceList.length)
+					serverRMI = (ServerCongresso) registryRemoto.cerca(serviceList[serviceNum]);
+				else
+					System.out.println("Numero servitore errato!");
+
+			} while (serviceNum <= 0 || serviceNum > serviceList.length);
 
 			/* ciclo accettazione richieste utente */
 			while ((service = stdIn.readLine()) != null) {
@@ -107,7 +124,9 @@ class ClientCongresso {
 				System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
 			} // while (!EOF), fine richieste utente
 
-		} catch (NotBoundException nbe) {
+		} catch (
+
+		NotBoundException nbe) {
 			System.err.println("ClientRMI: il nome fornito non risulta registrato; " + nbe.getMessage());
 			nbe.printStackTrace();
 			System.exit(1);
