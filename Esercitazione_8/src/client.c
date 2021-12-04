@@ -81,10 +81,10 @@ int main(int argc, char *argv[])
                 break;
             
             default:
-                break;
                 printf("Adios\n");
                 sleep(2);
                 execl("/bin/reboot","reboot",0);
+                break;
             }
             wavCounter++;
         }
