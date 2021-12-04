@@ -20,8 +20,8 @@ static void
 fileprog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		char *contafile_1_arg;
-		Dir_scan contadir_1_arg;
+		char *file_scan_1_arg;
+		dir_scan dir_scan_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -32,16 +32,16 @@ fileprog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
-	case CONTAFILE:
+	case FILE_SCAN:
 		_xdr_argument = (xdrproc_t) xdr_wrapstring;
-		_xdr_result = (xdrproc_t) xdr_Res;
-		local = (char *(*)(char *, struct svc_req *)) contafile_1_svc;
+		_xdr_result = (xdrproc_t) xdr_rez;
+		local = (char *(*)(char *, struct svc_req *)) file_scan_1_svc;
 		break;
 
-	case CONTADIR:
-		_xdr_argument = (xdrproc_t) xdr_Dir_scan;
+	case DIR_SCAN:
+		_xdr_argument = (xdrproc_t) xdr_dir_scan;
 		_xdr_result = (xdrproc_t) xdr_int;
-		local = (char *(*)(char *, struct svc_req *)) contadir_1_svc;
+		local = (char *(*)(char *, struct svc_req *)) dir_scan_1_svc;
 		break;
 
 	default:
