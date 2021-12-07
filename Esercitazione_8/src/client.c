@@ -44,8 +44,11 @@ int main(int argc, char *argv[])
                 clnt_perror(cl, server);
                 exit(1);
             }
-
-            printf("---------------------\nFile analizzato: 
+            if(res->charz==-1)
+                printf("File selezionato vuoto!");
+            if(res->charz==0 && res->worz==0 && res->linz==0)
+                printf("File selezionato vuoto!");
+            else printf("---------------------\nFile analizzato: 
              %s\n>charz:\t%d\n>worz:\t%d\n>linz:\t%d\n---------------------\n",
              filename, res->charz, res->worz, res->linz);
         }
@@ -61,12 +64,21 @@ int main(int argc, char *argv[])
             dirscan.filedim = filedim;
 
             ris = dir_scan_1(&dirscan, cl);
-            if (ris == -1)
+            if (ris == NULL)
             {
                 clnt_perror(cl, server);
                 exit(1);
             }
-            printf("---------------------\nTotale file grandi: %d\n---------------------\n", *ris);
+            switch (*ris)
+            {
+            case -1:
+                printf("Errore scansione directory!\n\n");
+                break;
+            default:
+                printf("---------------------\nTotale file grandi: %d\n---------------------\n", *ris);
+                break;
+            }
+            
         }
         else
         {
