@@ -60,14 +60,13 @@ int *dir_scan_1_svc(dir_scan *req, struct svc_req *rp)
     {
         strcpy(path, req->dirname);
 
-        if (strncmp(dent->d_name, ".", 1) != 0 && dent->d_type==DT_REG &&(fd = open(strcat(strcat(path, "/"), dent->d_name), O_RDONLY)) != -1)
+        if (strncmp(dent->d_name, ".", 1) != 0 && dent->d_type==DT_REG 
+            &&(fd = open(strcat(strcat(path, "/"), dent->d_name), O_RDONLY)) != -1)
         {
             if (lseek(fd, 0, SEEK_END) >= req->filedim)
                 res++;
-            printf("Dim: %d------%s----%d\t\n", lseek(fd, 0, SEEK_END), dent->d_name, res);
             close(fd);
         }
     }
-
     return (&res);
 }
