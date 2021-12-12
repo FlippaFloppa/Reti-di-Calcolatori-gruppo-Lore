@@ -83,7 +83,7 @@ output *classifica_giudici_1_svc( struct svc_req *rp)
         {
             if (strcmp(candidati[i].giudice, res.giudice[j].nome))
             {
-                res[j].voti +=  candidati[i].voti;
+                res.giudice[j].voti +=  candidati[i].voti;
                 break;
             }
         }
