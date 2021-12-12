@@ -24,6 +24,8 @@ xdr_judge (XDR *xdrs, judge *objp)
 
 	 if (!xdr_string (xdrs, &objp->nome, 32))
 		 return FALSE;
+	 if (!xdr_int (xdrs, &objp->voti))
+		 return FALSE;
 	return TRUE;
 }
 
@@ -34,7 +36,7 @@ xdr_output (XDR *xdrs, output *objp)
 
 	int i;
 	 if (!xdr_vector (xdrs, (char *)objp->giudice, 4,
-		sizeof (giudice), (xdrproc_t) xdr_giudice))
+		sizeof (judge), (xdrproc_t) xdr_judge))
 		 return FALSE;
 	return TRUE;
 }
