@@ -5,6 +5,7 @@
 #include "unistd.h"
 
 #define STRING_LENGHT 256
+#define Ngiudici 4
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +15,8 @@ int main(int argc, char *argv[])
     CLIENT *cl;
     char *server, *nome = malloc(32), *operazione= malloc(16);
     char dirname[PATH_MAX], procedure[STRING_LENGHT];
-    int *ris, filedim, wavCounter = 1;
+    int *res, filedim, wavCounter = 1;
+    int i;
 
     if (argc != 2) // controllo argomenti
     {
@@ -47,33 +49,29 @@ int main(int argc, char *argv[])
             in.nome=nome;
             in.operazione=operazione;
             res = esprimi_voto_1(&in, &cl);
-            printf("tanto non te lo dico come è andata :P");
-        }
-        else if (strcmp(procedure, "dirscan") == 0)
-        {
-            printf("Inserisci la directory da scansionare: ");
-            gets(dirname);
-            dirscan.dirname = dirname;
-            printf("Inserisci la dimensione minima del file: ");
-            while(scanf("%d%*c", &filedim)!=2){
-                printf("Dimensione errata!\n\nInserisci la dimensione minima del file: ");
+            switch (*res)
+            {
+            case 0:
+                printf("Il concorrente ha già zero voti, diminuire è follia!!!!!!!!\n");
+                break;
+            case -1:
+                printf("Il concorrente non esiste, non lo ha certamente preso il governo cinese :):):)\n");
+                break;
+            default:
+                printf("Hai votato con successo, bravo campione!");
+                break;
             }
-            dirscan.filedim = filedim;
-
-            ris = dir_scan_1(&dirscan, cl);
-            if (ris == NULL)
+        }
+        else if (strcmp(procedure, "classifica") == 0)
+        {
+            out = classifica_giudici_1(cl);
+            if (out == NULL)
             {
                 clnt_perror(cl, server);
                 exit(1);
             }
-            switch (*ris)
-            {
-            case -1:
-                printf("Errore scansione directory!\n\n");
-                break;
-            default:
-                printf("---------------------\nTotale file grandi: %d\n---------------------\n", *ris);
-                break;
+            for(i=0; i<Ngiudici; i++){
+                printf("Giudice: %s \t Voti: %d\n", out->giudice[i].nome, out->giudice[i].voti);
             }
             
         }
@@ -100,7 +98,7 @@ int main(int argc, char *argv[])
             wavCounter++;
         }
 
-        printf("Inserisci operazione desiderata:\n>fscan\n>dirscan\n");
+        printf("\n\n\n\n\n\n\nInserisci operazione desiderata:\n>vota\n>classifica\n");
     }
 
     free(nome);

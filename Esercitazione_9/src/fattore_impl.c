@@ -35,8 +35,8 @@ void inizializza()
     printf("Inizializzazione eseguita");
 }
 
-int *esprimi_voto_1_svc(input in)
-{
+int *esprimi_voto_1_svc(input in,  struct svc_req *rp)
+{   int res=-1;
     int i;
     inizializza();
     for (i = 0; i < N; i++)
@@ -47,19 +47,26 @@ int *esprimi_voto_1_svc(input in)
             {
                 candidati[i].voti++;
                 printf("Voto aggiunto a candidato %s", candidati[i].nome);
-                return;
+                res=1;
+                return &res;
             }
             if (strcmp("sottrazione", in.operazione) == 0)
             {
+                if(candidati[i].voti==0){
+                    res=0;
+                    return &res;
+                }
                 candidati[i].voti--;
                 printf("Voto sottratto a candidato %s", candidati[i].nome);
-                return;
+                res=1;
+                return &res;
             }
         }
     }
+    return &res;
 }
 
-output *classifica_giudici_1_svc()
+output *classifica_giudici_1_svc( struct svc_req *rp)
 {
     static output res;
     int i, j;
