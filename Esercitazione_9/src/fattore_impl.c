@@ -82,6 +82,7 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
     for (i = 0; i < Ngiudici; i++)
     {
         //Per il caso reale metteremmo i nomi dei giudici uno a uno
+        printf("Sto facendo il giudice %d", i);
         sprintf(res.giudice[i].nome, "%d", i );
         res.giudice[i].voti = 0;
     }
