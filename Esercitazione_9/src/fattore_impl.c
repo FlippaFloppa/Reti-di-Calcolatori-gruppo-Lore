@@ -66,7 +66,7 @@ int *esprimi_voto_1_svc(input in,  struct svc_req *rp)
     return &res;
 }
 
-output *classifica_giudici_1_svc(void *  struct svc_req *rp)
+output *classifica_giudici_1_svc(void * , struct svc_req *rp)
 {
     static output res;
     int i, j;
