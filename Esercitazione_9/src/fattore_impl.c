@@ -19,9 +19,10 @@ static int inizializzato = 0;
 void inizializza()
 {
     printf("Inizializziamo? ");
-    if (inizializzato == 1)
+    if (inizializzato == 1){
         printf("no");
         return;
+    }
     else{
         printf("si");
     }
