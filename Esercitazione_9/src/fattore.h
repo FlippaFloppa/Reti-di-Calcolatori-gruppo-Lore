@@ -22,11 +22,12 @@ typedef struct input input;
 
 struct judge {
 	char *nome;
+	int voti;
 };
 typedef struct judge judge;
 
 struct output {
-	giudice giudice[4];
+	judge giudice[4];
 };
 typedef struct output output;
 
