@@ -24,10 +24,10 @@ void inizializza()
     int i;
     for (i = 0; i < N; i++)
     {
-        sprintf("Candidato: %d", i, candidati[i].nome);
-        sprintf("%d", i / 2, candidati[i].giudice);
+        sprintf(candidati[i].nome, "%d",candidati[i].nome);
+        sprintf(candidati[i].giudice, "%d", i / 2 );
         candidati[i].categoria = 'U';
-        sprintf("%d.txt", i, candidati[i].nome);
+        sprintf(candidati[i].nome, "%d.txt", i );
         candidati[i].fase = 'S';
         candidati[i].voti = 0;
     }
@@ -73,7 +73,7 @@ output *classifica_giudici_1_svc( struct svc_req *rp)
     for (i = 0; i < Ngiudici; i++)
     {
         //Per il caso reale metteremmo i nomi dei giudici uno a uno
-        sprintf("%d", i, res.giudice[i].nome);
+        sprintf(res.giudice[i].nome, "%d", i );
         res.giudice[i].voti = 0;
     }
     inizializza();
@@ -83,7 +83,7 @@ output *classifica_giudici_1_svc( struct svc_req *rp)
         {
             if (strcmp(candidati[i].giudice, res.giudice[j].nome))
             {
-                res[j].voti += concorrenti[i].voti;
+                res[j].voti +=  candidati[i].voti;
                 break;
             }
         }
