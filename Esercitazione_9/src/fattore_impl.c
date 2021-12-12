@@ -49,7 +49,7 @@ int *esprimi_voto_1_svc(input * in,  struct svc_req *rp)
     inizializza();
     for (i = 0; i < N; i++)
     {
-        printf("%d) \t%s compared to %s equals %d \n",candidati[i].nome, in->nome, i, strcmp(candidati[i].nome, in->nome));
+        printf("%d) \t%s compared to %s equals %d \n",i, candidati[i].nome, in->nome, strcmp(candidati[i].nome, in->nome));
         if (strcmp(candidati[i].nome, in->nome) == 0)
         {
             if (strcmp("aggiunta", in->operazione) == 0)
