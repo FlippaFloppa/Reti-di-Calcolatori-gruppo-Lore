@@ -39,8 +39,8 @@ typedef struct output output;
 extern  output * classifica_giudici_1(void *, CLIENT *);
 extern  output * classifica_giudici_1_svc(void *, struct svc_req *);
 #define ESPRIMI_VOTO 2
-extern  void * esprimi_voto_1(input *, CLIENT *);
-extern  void * esprimi_voto_1_svc(input *, struct svc_req *);
+extern  int * esprimi_voto_1(input *, CLIENT *);
+extern  int * esprimi_voto_1_svc(input *, struct svc_req *);
 extern int fattore_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -48,8 +48,8 @@ extern int fattore_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 extern  output * classifica_giudici_1();
 extern  output * classifica_giudici_1_svc();
 #define ESPRIMI_VOTO 2
-extern  void * esprimi_voto_1();
-extern  void * esprimi_voto_1_svc();
+extern  int * esprimi_voto_1();
+extern  int * esprimi_voto_1_svc();
 extern int fattore_1_freeresult ();
 #endif /* K&R C */
 

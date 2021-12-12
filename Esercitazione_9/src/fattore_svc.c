@@ -39,7 +39,7 @@ fattore_1(struct svc_req *rqstp, register SVCXPRT *transp)
 
 	case ESPRIMI_VOTO:
 		_xdr_argument = (xdrproc_t) xdr_input;
-		_xdr_result = (xdrproc_t) xdr_void;
+		_xdr_result = (xdrproc_t) xdr_int;
 		local = (char *(*)(char *, struct svc_req *)) esprimi_voto_1_svc;
 		break;
 

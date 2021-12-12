@@ -12,7 +12,7 @@ xdr_input (XDR *xdrs, input *objp)
 
 	 if (!xdr_string (xdrs, &objp->nome, 32))
 		 return FALSE;
-	 if (!xdr_string (xdrs, &objp->operazione, 10))
+	 if (!xdr_string (xdrs, &objp->operazione, 16))
 		 return FALSE;
 	return TRUE;
 }
