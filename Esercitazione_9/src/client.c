@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     char dirname[PATH_MAX], procedure[STRING_LENGHT];
     int *res, filedim, wavCounter = 1;
     int i;
-    void * no;
+    void * no= NULL;
 
     if (argc != 2) // controllo argomenti
     {
