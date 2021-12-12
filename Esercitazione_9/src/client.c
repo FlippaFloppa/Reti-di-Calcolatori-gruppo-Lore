@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     server = argv[1];
     // creazione gestore di trasporto
-    if ((cl = clnt_create(server, FILEPROG, FILEVERS, "udp")) == NULL)
+    if ((cl = clnt_create(server, FATTORE, FACTVERS, "udp")) == NULL)
     {
         clnt_pcreateerror(server);
         exit(1);
