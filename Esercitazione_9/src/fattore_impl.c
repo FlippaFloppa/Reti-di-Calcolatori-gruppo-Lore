@@ -30,7 +30,7 @@ void inizializza()
     for (i = 0; i < N; i++)
     {
 
-        sprintf(candidati[i].nome, "%d",candidati[i].nome);
+        sprintf(candidati[i].nome, "%d" , i);
         puts(candidati[i].nome);
         sprintf(candidati[i].giudice, "%d", i / 2 );
         candidati[i].categoria = 'U';
