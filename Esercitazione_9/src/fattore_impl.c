@@ -34,7 +34,7 @@ void inizializza()
         puts(candidati[i].nome);
         sprintf(candidati[i].giudice, "%d", i / 2 );
         candidati[i].categoria = 'U';
-        sprintf(candidati[i].nome, "%d.txt", i );
+        sprintf(candidati[i].nomeFile, "%d.txt", i );
         candidati[i].fase = 'S';
         candidati[i].voti = 0;
     }
