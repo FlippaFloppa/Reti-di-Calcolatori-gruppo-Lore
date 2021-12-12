@@ -18,13 +18,19 @@ static int inizializzato = 0;
 
 void inizializza()
 {
-
+    printf("Inizializziamo? ");
     if (inizializzato == 1)
+        printf("no");
         return;
+    else{
+        printf("si");
+    }
     int i;
     for (i = 0; i < N; i++)
     {
+
         sprintf(candidati[i].nome, "%d",candidati[i].nome);
+        puts(candidati[i].nome);
         sprintf(candidati[i].giudice, "%d", i / 2 );
         candidati[i].categoria = 'U';
         sprintf(candidati[i].nome, "%d.txt", i );
