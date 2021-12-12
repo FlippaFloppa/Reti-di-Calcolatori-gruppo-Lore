@@ -77,6 +77,7 @@ int *esprimi_voto_1_svc(input * in,  struct svc_req *rp)
 
 output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_req *rp)
 {
+    printf("qua almeno dai");
     static output res;
     int i, j;
     for (i = 0; i < Ngiudici; i++)
