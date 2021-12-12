@@ -81,7 +81,7 @@ output *classifica_giudici_1_svc( struct svc_req *rp)
     {
         for (j = 0; j < Ngiudici; j++)
         {
-            if (strcmp(concorrenti[i].giudice, res[j].nome))
+            if (strcmp(candidati[i].giudice, res.giudice[j].nome))
             {
                 res[j].voti += concorrenti[i].voti;
                 break;
@@ -93,11 +93,11 @@ output *classifica_giudici_1_svc( struct svc_req *rp)
     {
         for (i = 0; i < Ngiudici - j - 1; i++)
         {
-            if (res[i].voti > res[i + 1].voti)
+            if (res.giudice[i].voti > res.giudice[i + 1].voti)
             {
-                temp = res[i];
-                res[i] = res[i + 1];
-                res[i + 1] = temp;
+                temp = res.giudice[i];
+                res.giudice[i] = res.giudice[i + 1];
+                res.giudice[i + 1] = temp;
             }
         }
     }
