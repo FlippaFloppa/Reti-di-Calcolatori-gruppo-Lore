@@ -3,7 +3,7 @@
 #include <stdio.h>
 #define N 8
 #define Ngiudici 4
-struct candidato
+typedef struct candidato
 {
     char nome[32];
     char giudice[32];
