@@ -36,7 +36,7 @@ void inizializza()
 }
 
 int *esprimi_voto_1_svc(input * in,  struct svc_req *rp)
-{   int res=-1;
+{   static int res=-1;
     printf("res\n");
     int i;
     inizializza();
