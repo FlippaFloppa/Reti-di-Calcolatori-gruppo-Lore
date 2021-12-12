@@ -1,6 +1,6 @@
-struct input{string nome<32>; string operazione<10>};
-struct judge{string nome<32>};
-struct output{giudice giudice[4]};
+struct input{string nome<32>; string operazione<10>;};
+struct judge{string nome<32>;};
+struct output{giudice giudice[4];};
 
 program FATTORE{
     version FACTVERS{
