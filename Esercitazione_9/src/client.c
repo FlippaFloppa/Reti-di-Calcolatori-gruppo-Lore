@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     input in;
     output *out;
     CLIENT *cl;
-    char *server, *nome = malloc(32), *operazione= malloc(16);
+    char *server, *nome = malloc(32), *operazione = malloc(16);
     char dirname[PATH_MAX], procedure[STRING_LENGHT];
     int *res, filedim, wavCounter = 1;
     int i;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     server = argv[1];
     // creazione gestore di trasporto
-    if (( cl = clnt_create(server, FILEPROG,FILEVERS, "udp")) == NULL)
+    if ((cl = clnt_create(server, FILEPROG, FILEVERS, "udp")) == NULL)
     {
         clnt_pcreateerror(server);
         exit(1);
@@ -42,12 +42,13 @@ int main(int argc, char *argv[])
             gets(nome);
             printf("Inserisci la procedura richiesta: ");
             gets(operazione);
-            if(strcmp(operazione, "aggiunta")!=0 && strcmp(operazione, "sottrazione")!=0){
+            if (strcmp(operazione, "aggiunta") != 0 && strcmp(operazione, "sottrazione") != 0)
+            {
                 printf("Operazione non esistente, seleziona \"aggiunta\" o \"sottrazione\"");
                 continue;
             }
-            in.nome=nome;
-            in.operazione=operazione;
+            in.nome = nome;
+            in.operazione = operazione;
             res = esprimi_voto_1(&in, &cl);
             switch (*res)
             {
@@ -64,16 +65,16 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(procedure, "classifica") == 0)
         {
-            out = classifica_giudici_1(cl);
+            out = classifica_giudici_1(null, cl);
             if (out == NULL)
             {
                 clnt_perror(cl, server);
                 exit(1);
             }
-            for(i=0; i<Ngiudici; i++){
+            for (i = 0; i < Ngiudici; i++)
+            {
                 printf("Giudice: %s \t Voti: %d\n", out->giudice[i].nome, out->giudice[i].voti);
             }
-            
         }
         else
         {
