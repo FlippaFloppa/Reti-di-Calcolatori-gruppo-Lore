@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
             }
             in.nome = nome;
             in.operazione = operazione;
-            res = esprimi_voto_1(&in, &cl);
+            res = esprimi_voto_1(&in, cl);
             switch (*res)
             {
             case 0:
