@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     char dirname[PATH_MAX], procedure[STRING_LENGHT];
     int *res, filedim, wavCounter = 1;
     int i;
+    void * no;
 
     if (argc != 2) // controllo argomenti
     {
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(procedure, "classifica") == 0)
         {
-            out = classifica_giudici_1(null, cl);
+            out = classifica_giudici_1( no, cl);
             if (out == NULL)
             {
                 clnt_perror(cl, server);
