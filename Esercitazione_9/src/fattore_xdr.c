@@ -22,7 +22,9 @@ xdr_judge (XDR *xdrs, judge *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, &objp->nome, 32))
+	int i;
+	 if (!xdr_vector (xdrs, (char *)objp->nome, 32,
+		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->voti))
 		 return FALSE;

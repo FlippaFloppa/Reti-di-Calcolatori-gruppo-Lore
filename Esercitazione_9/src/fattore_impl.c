@@ -16,6 +16,7 @@ typedef struct candidato
 static candidato candidati[N];
 static int inizializzato = 0;
 
+
 void inizializza()
 {
     printf("Inizializziamo? ");
@@ -31,60 +32,62 @@ void inizializza()
     {
 
         sprintf(candidati[i].nome, "%d" , i);
-        puts(candidati[i].nome);
-        sprintf(candidati[i].giudice, "%d", i / 2 );
+        sprintf(candidati[i].giudice, "%d", i % Ngiudici );
         candidati[i].categoria = 'U';
         sprintf(candidati[i].nomeFile, "%d.txt", i );
         candidati[i].fase = 'S';
         candidati[i].voti = 0;
+
+        printf("candidato: %s\tgiudice: %s\n",candidati[i].nome,candidati[i].giudice);
     }
     inizializzato = 1;
     printf("Inizializzazione eseguita\n");
 }
 
 int *esprimi_voto_1_svc(input * in,  struct svc_req *rp)
-{   static int res=-1;
-    printf("res\n");
+{   static int flag;
+    flag=-1;
     int i;
     inizializza();
     for (i = 0; i < N; i++)
     {
-        printf("%d) \t%s compared to %s equals %d \n",i, candidati[i].nome, in->nome, strcmp(candidati[i].nome, in->nome));
+        //printf("%d) \t%s compared to %s equals %d \n",i, candidati[i].nome, in->nome, strcmp(candidati[i].nome, in->nome));
         if (strcmp(candidati[i].nome, in->nome) == 0)
         {
-            if (strcmp("aggiunta", in->operazione) == 0)
+            if (strcmp("add", in->operazione) == 0)
             {
                 candidati[i].voti++;
                 printf("Voto aggiunto a candidato %s", candidati[i].nome);
-                res=1;
-                return &res;
+                flag=1;
+                return &flag;
             }
-            if (strcmp("sottrazione", in->operazione) == 0)
+            if (strcmp("sub", in->operazione) == 0)
             {
                 if(candidati[i].voti==0){
-                    res=0;
-                    return &res;
+                    flag=0;
+                    return &flag;
                 }
                 candidati[i].voti--;
                 printf("Voto sottratto a candidato %s", candidati[i].nome);
-                res=1;
-                return &res;
+                flag=1;
+                return &flag;
             }
         }
     }
-    return &res;
+    return &flag;
 }
 
 output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_req *rp)
 {
-    printf("qua almeno dai");
+
     static output res;
+    printf("qua almeno dai");
     int i, j;
     for (i = 0; i < Ngiudici; i++)
     {
         //Per il caso reale metteremmo i nomi dei giudici uno a uno
         printf("Sto facendo il giudice %d", i);
-        sprintf(res.giudice[i].nome, "%d", i );
+        sprintf(res.giudice[i].nome, "%d", i);
         res.giudice[i].voti = 0;
     }
     inizializza();
@@ -92,7 +95,7 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
     {
         for (j = 0; j < Ngiudici; j++)
         {
-            if (strcmp(candidati[i].giudice, res.giudice[j].nome))
+            if (strcmp(candidati[i].giudice, res.giudice[j].nome)==0)
             {
                 res.giudice[j].voti +=  candidati[i].voti;
                 break;

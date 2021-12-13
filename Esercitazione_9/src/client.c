@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
             gets(nome);
             printf("Inserisci la procedura richiesta: ");
             gets(operazione);
-            if (strcmp(operazione, "aggiunta") != 0 && strcmp(operazione, "sottrazione") != 0)
+            if (strcmp(operazione, "add") != 0 && strcmp(operazione, "sub") != 0)
             {
-                printf("Operazione non esistente, seleziona \"aggiunta\" o \"sottrazione\"");
+                printf("Operazione non esistente, seleziona \"add\" o \"sub\"\n");
                 continue;
             }
             in.nome = nome;

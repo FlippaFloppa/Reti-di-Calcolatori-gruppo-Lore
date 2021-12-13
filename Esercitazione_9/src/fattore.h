@@ -21,7 +21,7 @@ struct input {
 typedef struct input input;
 
 struct judge {
-	char *nome;
+	char nome[32];
 	int voti;
 };
 typedef struct judge judge;

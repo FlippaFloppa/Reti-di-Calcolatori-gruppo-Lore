@@ -1,5 +1,5 @@
 struct input{string nome<32>; string operazione<16>;};
-struct judge{string nome<32>; int voti;};
+struct judge{char nome[32]; int voti;};
 struct output{judge giudice[4];};
 
 program FATTORE{
