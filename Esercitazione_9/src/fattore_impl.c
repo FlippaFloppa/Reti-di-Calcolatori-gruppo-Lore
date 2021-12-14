@@ -19,14 +19,6 @@ static int inizializzato = 0;
 
 void inizializza()
 {
-    printf("Inizializziamo? ");
-    if (inizializzato == 1){
-        printf("no");
-        return;
-    }
-    else{
-        printf("si\n");
-    }
     int i;
     for (i = 0; i < N; i++)
     {
@@ -48,10 +40,9 @@ int *esprimi_voto_1_svc(input * in,  struct svc_req *rp)
 {   static int flag;
     flag=-1;
     int i;
-    inizializza();
+    if(!inizializzato)inizializza();
     for (i = 0; i < N; i++)
     {
-        //printf("%d) \t%s compared to %s equals %d \n",i, candidati[i].nome, in->nome, strcmp(candidati[i].nome, in->nome));
         if (strcmp(candidati[i].nome, in->nome) == 0)
         {
             if (strcmp("add", in->operazione) == 0)
@@ -83,14 +74,13 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
     static output res;
     printf("qua almeno dai");
     int i, j;
-    for (i = 0; i < Ngiudici; i++)
+    for (i = 0; i < Ngiudici; i++) // Inizializzazione giudici
     {
-        //Per il caso reale metteremmo i nomi dei giudici uno a uno
         printf("Sto facendo il giudice %d", i);
         sprintf(res.giudice[i].nome, "%d", i);
         res.giudice[i].voti = 0;
     }
-    inizializza();
+    if(!inizializzato)inizializza();
     for (i = 0; i < N; i++)
     {
         for (j = 0; j < Ngiudici; j++)
