@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#define L_NOMI 32
+#define N_GIUDICI 4
 
 struct input {
 	char *nome;
@@ -21,13 +23,13 @@ struct input {
 typedef struct input input;
 
 struct judge {
-	char nome[32];
+	char nome[L_NOMI];
 	int voti;
 };
 typedef struct judge judge;
 
 struct output {
-	judge giudice[4];
+	judge giudice[N_GIUDICI];
 };
 typedef struct output output;
 

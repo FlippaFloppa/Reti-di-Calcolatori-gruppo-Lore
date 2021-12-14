@@ -2,13 +2,13 @@
 #include <string.h>
 #include <stdio.h>
 #define N 8
-#define Ngiudici 4
+#define MAX_FILE_NAME 64
 typedef struct candidato
 {
-    char nome[32];
-    char giudice[32];
+    char nome[L_NOMI];
+    char giudice[L_NOMI];
     char categoria;
-    char nomeFile[64];
+    char nomeFile[MAX_FILE_NAME];
     char fase;
     int voti;
 } candidato;
@@ -22,9 +22,8 @@ void inizializza()
     int i;
     for (i = 0; i < N; i++)
     {
-
         sprintf(candidati[i].nome, "%d" , i);
-        sprintf(candidati[i].giudice, "%d", i % Ngiudici );
+        sprintf(candidati[i].giudice, "%d", i % N_GIUDICI );
         candidati[i].categoria = 'U';
         sprintf(candidati[i].nomeFile, "%d.txt", i );
         candidati[i].fase = 'S';
@@ -74,7 +73,7 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
     static output res;
     printf("qua almeno dai");
     int i, j;
-    for (i = 0; i < Ngiudici; i++) // Inizializzazione giudici
+    for (i = 0; i < N_GIUDICI; i++) // Inizializzazione giudici
     {
         printf("Sto facendo il giudice %d", i);
         sprintf(res.giudice[i].nome, "%d", i);
@@ -83,7 +82,7 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
     if(!inizializzato)inizializza();
     for (i = 0; i < N; i++)
     {
-        for (j = 0; j < Ngiudici; j++)
+        for (j = 0; j < N_GIUDICI; j++)
         {
             if (strcmp(candidati[i].giudice, res.giudice[j].nome)==0)
             {
@@ -93,9 +92,9 @@ output *classifica_giudici_1_svc(void * nientedinienteproprionulla, struct svc_r
         }
     }
     judge temp;
-    for (j = 0; j < Ngiudici; j++)
+    for (j = 0; j < N_GIUDICI; j++)
     {
-        for (i = 0; i < Ngiudici - j - 1; i++)
+        for (i = 0; i < N_GIUDICI - j - 1; i++)
         {
             if (res.giudice[i].voti > res.giudice[i + 1].voti)
             {

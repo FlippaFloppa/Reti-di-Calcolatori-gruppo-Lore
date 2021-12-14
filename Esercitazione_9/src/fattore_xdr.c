@@ -10,9 +10,9 @@ xdr_input (XDR *xdrs, input *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_string (xdrs, &objp->nome, 32))
+	 if (!xdr_string (xdrs, &objp->nome, L_NOMI))
 		 return FALSE;
-	 if (!xdr_string (xdrs, &objp->operazione, 16))
+	 if (!xdr_string (xdrs, &objp->operazione, 4))
 		 return FALSE;
 	return TRUE;
 }
@@ -23,7 +23,7 @@ xdr_judge (XDR *xdrs, judge *objp)
 	register int32_t *buf;
 
 	int i;
-	 if (!xdr_vector (xdrs, (char *)objp->nome, 32,
+	 if (!xdr_vector (xdrs, (char *)objp->nome, L_NOMI,
 		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->voti))
@@ -37,7 +37,7 @@ xdr_output (XDR *xdrs, output *objp)
 	register int32_t *buf;
 
 	int i;
-	 if (!xdr_vector (xdrs, (char *)objp->giudice, 4,
+	 if (!xdr_vector (xdrs, (char *)objp->giudice, N_GIUDICI,
 		sizeof (judge), (xdrproc_t) xdr_judge))
 		 return FALSE;
 	return TRUE;

@@ -1,10 +1,13 @@
-struct input{string nome<32>; string operazione<16>;};
-struct judge{char nome[32]; int voti;};
-struct output{judge giudice[4];};
+const L_NOMI=32;
+const N_GIUDICI=4;
+
+struct input{string nome<L_NOMI>; string operazione<4>;};
+struct judge{char nome[L_NOMI]; int voti;};
+struct output{judge giudice[N_GIUDICI];};
 
 program FATTORE{
     version FACTVERS{
-        output CLASSIFICA_GIUDICI(void)=1;
+        output CLASSIFICA_GIUDICI()=1;
         int ESPRIMI_VOTO(input)=2;
     }=1;
 }=0x20000013;
